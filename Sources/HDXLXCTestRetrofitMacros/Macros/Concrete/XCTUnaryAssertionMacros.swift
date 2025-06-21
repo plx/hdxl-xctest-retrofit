@@ -11,13 +11,13 @@ public enum XCTAssertMacro: XCTUnaryAssertionMacroProtocol {
 
 public enum XCTAssertTrueMacro: XCTUnaryAssertionMacroProtocol {
   public static func prepareAssertionExpression(conditionExpression: ExprSyntax) throws -> ExprSyntax {
-    conditionExpression
+    "Bool(\(conditionExpression))" as ExprSyntax
   }
 }
 
 public enum XCTAssertFalseMacro: XCTUnaryAssertionMacroProtocol {
   public static func prepareAssertionExpression(conditionExpression: ExprSyntax) throws -> ExprSyntax {
-    "!\(conditionExpression)" as ExprSyntax
+    "Bool(\(conditionExpression))" as ExprSyntax
   }
 }
 

@@ -28,7 +28,7 @@ let testMacros: [String: XCTAssertionMacroProtocol.Type] = [
 final class HDXLXCTestRetrofitMacrosTests : XCTestCase {
   
   
-  func testXCTAssert() throws {
+  func testXCTAssertExpansion() throws {
 #if canImport(HDXLXCTestRetrofitMacros)
     assertMacroExpansion(
       """
@@ -65,7 +65,7 @@ final class HDXLXCTestRetrofitMacrosTests : XCTestCase {
 #endif
   }
   
-  func testXCTAssertEqual() throws {
+  func testXCTAssertEqualExpansion() throws {
 #if canImport(HDXLXCTestRetrofitMacros)
     assertMacroExpansion(
       """

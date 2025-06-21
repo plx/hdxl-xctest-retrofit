@@ -64,6 +64,14 @@ let package = Package(
         ),
       ]
     ),
+
+    // A test target used to verify the macro expansions produce expected results
+    .testTarget(
+      name: "HDXLXCTestRetrofitUsageTests",
+      dependencies: [
+        "HDXLXCTestRetrofit"
+      ]
+    ),
   ]
 )
 
