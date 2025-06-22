@@ -62,7 +62,7 @@ public macro XCTUnwrap<T>(
   _ message: @autoclosure () -> String = "",
   file: StaticString = #filePath,
   line: UInt = #line
-) = #externalMacro(
+) -> T = #externalMacro(
   module: "HDXLXCTestRetrofitMacros",
   type: "XCTUnwrapMacro"
 )
@@ -126,7 +126,7 @@ public macro XCTAssertGreaterThan<T>(
   line: UInt = #line
 ) = #externalMacro(
   module: "HDXLXCTestRetrofitMacros",
-  type: "XCTAssertGreaterThanOrEqualMacro"
+  type: "XCTAssertGreaterThanMacro"
 ) where T: Comparable
 
 @freestanding(expression)

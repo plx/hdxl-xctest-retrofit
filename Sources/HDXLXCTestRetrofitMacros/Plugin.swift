@@ -11,6 +11,7 @@ struct HDXLXCTestRetrofitPlugin: CompilerPlugin {
     XCTAssertFalseMacro.self,
     XCTAssertNotNilMacro.self,
     XCTAssertNilMacro.self,
+    XCTUnwrapMacro.self,
     
     XCTAssertEqualMacro.self,
     XCTAssertNotEqualMacro.self,

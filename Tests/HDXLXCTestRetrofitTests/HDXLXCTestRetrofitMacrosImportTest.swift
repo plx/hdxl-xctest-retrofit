@@ -30,35 +30,35 @@ final class HDXLXCTestRetrofitMacrosTests : XCTestCase {
   
   func testXCTAssertExpansion() throws {
 #if canImport(HDXLXCTestRetrofitMacros)
-    assertMacroExpansion(
+    assertTrimmedMacroExpansion(
       """
       #XCTAssert(true)
       """,
       expandedSource:
       """
-      #expect(true)
+      #expect(Bool((true)))
       """,
       macros: testMacros
     )
     
-    assertMacroExpansion(
+    assertTrimmedMacroExpansion(
       """
-      #XCTAssert(true, "boo!")  
+      #XCTAssert(true, "boo!")
       """,
       expandedSource:
       """
-      #expect(true, "boo!")
+      #expect(Bool((true)), "boo!")
       """,
       macros: testMacros
     )
     
-    assertMacroExpansion(
+    assertTrimmedMacroExpansion(
       """
-      #XCTAssert(true, "boo!", file: file, line: line)  
+      #XCTAssert(true, "boo!", file: file, line: line)
       """,
       expandedSource:
       """
-      #expect(true, "boo!", sourceLocation: SourceLocation(file: file, line: line))
+      #expect(Bool((true)), "boo!", sourceLocation: SourceLocation(file: file, line: line))
       """,
       macros: testMacros
     )
@@ -67,7 +67,7 @@ final class HDXLXCTestRetrofitMacrosTests : XCTestCase {
   
   func testXCTAssertEqualExpansion() throws {
 #if canImport(HDXLXCTestRetrofitMacros)
-    assertMacroExpansion(
+    assertTrimmedMacroExpansion(
       """
       #XCTAssertEqual(a, b)
       """,
@@ -78,7 +78,7 @@ final class HDXLXCTestRetrofitMacrosTests : XCTestCase {
       macros: testMacros
     )
     
-    assertMacroExpansion(
+    assertTrimmedMacroExpansion(
       """
       #XCTAssertEqual(a, b, "boo!")
       """,
@@ -89,7 +89,7 @@ final class HDXLXCTestRetrofitMacrosTests : XCTestCase {
       macros: testMacros
     )
     
-    assertMacroExpansion(
+    assertTrimmedMacroExpansion(
       """
       #XCTAssertEqual(a, b, "boo!", file: file, line: line)
       """,
@@ -101,4 +101,33 @@ final class HDXLXCTestRetrofitMacrosTests : XCTestCase {
     )
 #endif
   }
+}
+
+
+func assertTrimmedMacroExpansion(
+  _ originalSource: String,
+  expandedSource expectedExpandedSource: String,
+  diagnostics: [DiagnosticSpec] = [],
+  macros: [String: Macro.Type],
+  applyFixIts: [String]? = nil,
+  fixedSource expectedFixedSource: String? = nil,
+  testModuleName: String = "TestModule",
+  testFileName: String = "test.swift",
+  indentationWidth: Trivia = .spaces(4),
+  file: StaticString = #filePath,
+  line: UInt = #line
+) {
+  assertMacroExpansion(
+    originalSource.trimmingTrailingWhitespace(),
+    expandedSource: expectedExpandedSource.trimmingTrailingWhitespace(),
+    diagnostics: diagnostics,
+    macros: macros,
+    applyFixIts: applyFixIts,
+    fixedSource: expectedFixedSource,
+    testModuleName: testModuleName,
+    testFileName: testFileName,
+    indentationWidth: indentationWidth,
+    file: file,
+    line: line
+  )
 }

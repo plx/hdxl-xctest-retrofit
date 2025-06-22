@@ -24,11 +24,33 @@ struct UnaryAssertionTests {
 
   @Test("XCTAssertFalse")
   func testXCTAssertFalse() {
-    #XCTAssertFalse(true)
-    #XCTAssertFalse(!false)
+    #XCTAssertFalse(false)
+    #XCTAssertFalse(!true)
     
-    #XCTAssertFalse(true, "really")
-    #XCTAssertFalse(!false, "again")
+    #XCTAssertFalse(false, "really")
+    #XCTAssertFalse(!true, "again")
   }
+
+  @Test("XCTAssertNil")
+  func testXCTAssertNil() {
+    #XCTAssertNil(nil as Int?)
+    #XCTAssertNil(nil as Int?, "notnil")
+  }
+  
+  @Test("XCTAssertNotNil")
+  func testXCTAssertNotNil() {
+    #XCTAssertNotNil(1 as Int?)
+    #XCTAssertNotNil(1 as Int?, "not-nil")
+  }
+  
+  @Test("XCTUnwrap")
+  func testXCTUnwrap() throws {
+    let wrapped: Int? = 7
+    let unwrapped = try #XCTUnwrap(wrapped)
+    #expect(
+      unwrapped == wrapped
+    )
+  }
+
 
 }

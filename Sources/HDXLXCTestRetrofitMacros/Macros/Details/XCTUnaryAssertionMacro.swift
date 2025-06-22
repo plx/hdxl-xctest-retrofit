@@ -23,7 +23,7 @@ extension XCTUnaryAssertionMacroProtocol {
     1
   }
   
-  public static var addDefensiveParentheses: Bool { false }
+  public static var addDefensiveParentheses: Bool { true }
   
   package static func extractUnaryAssertionComponents(
     of node: some FreestandingMacroExpansionSyntax,
