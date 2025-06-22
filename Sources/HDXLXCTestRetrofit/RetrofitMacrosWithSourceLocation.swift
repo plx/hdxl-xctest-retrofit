@@ -162,3 +162,53 @@ public macro XCTAssertLessThanOrEqual<T>(
   module: "HDXLXCTestRetrofitMacros",
   type: "XCTAssertLessThanOrEqualMacro"
 ) where T: Comparable
+
+// MARK: Binary With Tolerance
+
+@freestanding(expression)
+public macro XCTAssertEqual<T>(
+  _ expression1: @autoclosure () throws -> T,
+  _ expression2: @autoclosure () throws -> T,
+  accuracy: T,
+  _ message: @autoclosure () -> String = "",
+  sourceLocation: SourceLocation
+) = #externalMacro(
+  module: "HDXLXCTestRetrofitMacros",
+  type: "XCTAssertEqualWithToleranceMacro"
+) where T : FloatingPoint
+
+@freestanding(expression)
+public macro XCTAssertEqual<T>(
+  _ expression1: @autoclosure () throws -> T,
+  _ expression2: @autoclosure () throws -> T,
+  accuracy: T,
+  _ message: @autoclosure () -> String = "",
+  sourceLocation: SourceLocation
+) = #externalMacro(
+  module: "HDXLXCTestRetrofitMacros",
+  type: "XCTAssertEqualWithToleranceMacro"
+) where T : Numeric
+
+@freestanding(expression)
+public macro XCTAssertNotEqual<T>(
+  _ expression1: @autoclosure () throws -> T,
+  _ expression2: @autoclosure () throws -> T,
+  accuracy: T,
+  _ message: @autoclosure () -> String = "",
+  sourceLocation: SourceLocation
+) = #externalMacro(
+  module: "HDXLXCTestRetrofitMacros",
+  type: "XCTAssertNotEqualWithToleranceMacro"
+) where T : FloatingPoint
+
+@freestanding(expression)
+public macro XCTAssertNotEqual<T>(
+  _ expression1: @autoclosure () throws -> T,
+  _ expression2: @autoclosure () throws -> T,
+  accuracy: T,
+  _ message: @autoclosure () -> String = "",
+  sourceLocation: SourceLocation
+) = #externalMacro(
+  module: "HDXLXCTestRetrofitMacros",
+  type: "XCTAssertNotEqualWithToleranceMacro"
+) where T : Numeric

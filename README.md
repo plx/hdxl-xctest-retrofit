@@ -100,6 +100,5 @@ I have no plans to grow this beyond being a way to port existing XCTest code to 
 Having said that, there are some XCTest capabilities I haven't addressed yet b/c they're not relevant to what I'm porting:
 
 - [ ] [`XCTAssertThrowsError`](https://developer.apple.com/documentation/xctest/xctassertthrowserror(_:_:file:line:_:))
-- [ ] [Equals-with-accuracy](https://developer.apple.com/documentation/xctest/xctassertequal(_:_:accuracy:_:file:line:)-6frfw) (and similar API)
 - [ ] [Expected failures](https://developer.apple.com/documentation/xctest/expected-failures)
 
