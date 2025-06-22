@@ -3,7 +3,7 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 
-public protocol XCTBinaryOperatorAssertionMacroProtocol : XCTBinaryAssertionMacroProtocol {
+public protocol XCTBinaryOperatorAssertionMacroProtocol: XCTBinaryAssertionMacroProtocol {
   static var operatorSymbol: String { get }
 }
 
