@@ -74,4 +74,4 @@ struct BinaryAssertionFailureTests {
 
 }
 
-fileprivate class EmptyObject {}
+private class EmptyObject {}

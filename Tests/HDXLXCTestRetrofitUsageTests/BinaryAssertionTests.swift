@@ -75,4 +75,4 @@ struct BinaryAssertionTests {
 
 }
 
-fileprivate class EmptyObject {}
+private class EmptyObject {}

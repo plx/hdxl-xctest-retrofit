@@ -76,4 +76,4 @@ struct BinaryAssertionWithSourceLocationFailureTests {
 
 }
 
-fileprivate class EmptyObject {}
+private class EmptyObject {}

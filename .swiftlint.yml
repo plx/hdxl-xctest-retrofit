@@ -11,6 +11,8 @@ disabled_rules:
   - unneeded_synthesized_initializer # dubious when you need inlinability
   - todo # disagree this even deserves a warning (under normal use)
   - redundant_optional_initialization # dislike Swift's default behavior
+  - large_tuple
+  - for_where
 
 opt_in_rules:
   - array_init # Array(seq) instead of seq.map { $0 }
@@ -29,8 +31,8 @@ opt_in_rules:
   - empty_collection_literal
   - empty_count
   - empty_string
-  - explicit_acl # strongly preferred
-  - explicit_top_level_acl # strongly preferred
+  # - explicit_acl # strongly preferred
+  # - explicit_top_level_acl # strongly preferred
   - explicit_init
   - fatal_error_message
   - file_name_no_space
@@ -72,6 +74,8 @@ identifier_name:
     - op
     - i
     - j
+    - a
+    - b
   allowed_symbols: ["_"]
 
 type_name:
