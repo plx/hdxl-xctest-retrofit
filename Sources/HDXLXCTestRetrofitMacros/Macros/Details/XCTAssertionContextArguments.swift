@@ -3,6 +3,8 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 
+// MARK: XCTAssertionContextArguments
+
 public struct XCTAssertionContextArguments {
   
   public var messageExpression: ExprSyntax?
@@ -24,6 +26,8 @@ public struct XCTAssertionContextArguments {
   
 }
 
+// MARK: - SwiftSyntax Interop
+
 extension XCTAssertionContextArguments {
   
   package init?(
@@ -41,39 +45,4 @@ extension XCTAssertionContextArguments {
       sourceLocationExpression: labeledExprListSyntax.lastExpression(withLabel: "sourceLocation")
     )
   }
-}
-
-extension Collection where Element == LabeledExprSyntax {
-  
-  package var firstExpressionIfUnlabeled: ExprSyntax? {
-    guard
-      let firstLabeledExpression = first,
-      firstLabeledExpression.label == nil
-    else {
-      return nil
-    }
-    
-    return firstLabeledExpression.expression
-  }
-  
-  package func firstExpression(withLabel label: String) -> ExprSyntax? {
-    for labeledExpr in self {
-      if labeledExpr.label?.text == label {
-        return labeledExpr.expression
-      }
-    }
-    
-    return nil
-  }
-
-  package func lastExpression(withLabel label: String) -> ExprSyntax? {
-    for labeledExpr in self.reversed() {
-      if labeledExpr.label?.text == label {
-        return labeledExpr.expression
-      }
-    }
-    
-    return nil
-  }
-
 }

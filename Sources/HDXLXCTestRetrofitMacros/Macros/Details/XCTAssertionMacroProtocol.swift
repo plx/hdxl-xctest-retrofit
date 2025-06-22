@@ -3,27 +3,22 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 
+// MARK: XCTAssertionMacroProtocol
+
 public protocol XCTAssertionMacroProtocol: ExpressionMacro, SendableMetatype {
   
-  static func expectedInvocationFunctionName() throws -> String
   static var mandatoryArgumentCount: Int { get }
-  
-  static var swiftTestingMacroName: String { get }
-  
-  static func swiftTestingMacroArguments(
-    assertionExpression: ExprSyntax,
-    contextArguments: XCTAssertionContextArguments
-  ) throws -> LabeledExprListSyntax
+  static var rewrittenInvocationName: String { get }
 
-  static var addDefensiveParentheses: Bool { get }
+  static func expectedInvocationFunctionName() throws -> String
 
 }
 
+// MARK: - Default Implementations
+
 extension XCTAssertionMacroProtocol {
   
-  public static var addDefensiveParentheses: Bool { true }
-
-  public static var swiftTestingMacroName: String { "expect"}
+  public static var rewrittenInvocationName: String { "expect"}
   
   public static func expectedInvocationFunctionName() throws -> String {
     var macroName = String(describing: self)
@@ -40,6 +35,12 @@ extension XCTAssertionMacroProtocol {
     macroName.removeSubrange(hdxlRange)
     return "XCT" + macroName
   }
+  
+}
+
+// MARK: - Convenience API
+
+extension XCTAssertionMacroProtocol {
   
   package static func verifyInvocationName(of node: some FreestandingMacroExpansionSyntax) throws {
     let expectedName = try expectedInvocationFunctionName()
@@ -79,68 +80,5 @@ extension XCTAssertionMacroProtocol {
     return contextArguments
   }
   
-  public static func swiftTestingMacroArguments(
-    assertionExpression: ExprSyntax,
-    contextArguments: XCTAssertionContextArguments
-  ) -> LabeledExprListSyntax {
-    LabeledExprListSyntax {
-      LabeledExprSyntax(expression: assertionExpression)
-      if let messageExpression = contextArguments.messageExpression {
-        LabeledExprSyntax(expression: messageExpression)
-      }
-      if let sourceLocationExpression = contextArguments.sourceLocationExpression {
-        LabeledExprSyntax(
-          label: "sourceLocation",
-          expression: sourceLocationExpression
-        )
-      } else if let fileExpression = contextArguments.fileExpression, let lineExpression = contextArguments.lineExpression {
-        LabeledExprSyntax(
-          label: "sourceLocation",
-          expression: "SourceLocation(file: \(fileExpression), line: \(lineExpression))" as ExprSyntax
-        )
-      } else if let fileExpression = contextArguments.fileExpression {
-        LabeledExprSyntax(
-          label: "sourceLocation",
-          expression: "SourceLocation(file: \(fileExpression))" as ExprSyntax
-        )
-      } else if let lineExpression = contextArguments.lineExpression {
-        LabeledExprSyntax(
-          label: "sourceLocation",
-          expression: "SourceLocation(line: \(lineExpression))" as ExprSyntax
-        )
-      }
-    }
-  }
-
 }
 
-
-public enum XCTAssertionMacroError: Error, CustomStringConvertible {
-  
-  case unableToInferXCTAssertionName(String)
-  case unexpectedXCTAssertionName(String, String)
-  case insufficientArgumentCount(String, Int, Int)
-  case unableToExtractContextArguments(String)
-
-  public var description: String {
-    switch self {
-    case .unableToInferXCTAssertionName(let macroName):
-      """
-      Unable to infer an XCT assertion name from `\(macroName)`!
-      """
-    case .unexpectedXCTAssertionName(let expected, let observed):
-      """
-      Expected assertion-name `\(expected)` but encountered `\(observed)` instead!
-      """
-    case .insufficientArgumentCount(let macroName, let minimum, let observed):
-      """
-      `\(macroName)` needs at-least \(minimum) arguments, but only saw `\(observed)`, instead!
-      """
-    case .unableToExtractContextArguments(let macroName):
-      """
-      `\(macroName)` failed to extract usable context arguments!
-      """
-    }
-  }
-  
-}

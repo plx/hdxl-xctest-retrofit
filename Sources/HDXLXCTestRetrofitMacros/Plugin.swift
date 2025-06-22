@@ -6,6 +6,8 @@ import SwiftSyntaxMacros
 @main
 struct HDXLXCTestRetrofitPlugin: CompilerPlugin {
   let providingMacros: [Macro.Type] = [
+    XCTFailMacro.self,
+    
     XCTAssertMacro.self,
     XCTAssertTrueMacro.self,
     XCTAssertFalseMacro.self,

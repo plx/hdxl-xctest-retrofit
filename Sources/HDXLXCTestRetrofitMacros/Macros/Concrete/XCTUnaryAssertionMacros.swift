@@ -37,7 +37,7 @@ public enum XCTAssertNilMacro: XCTUnaryAssertionMacroProtocol {
 }
 
 public enum XCTUnwrapMacro: XCTUnaryAssertionMacroProtocol {
-  public static let swiftTestingMacroName: String = "require"
+  public static let rewrittenInvocationName: String = "require"
   
   public static func prepareAssertionExpression(conditionExpression: ExprSyntax) throws -> ExprSyntax {
     conditionExpression

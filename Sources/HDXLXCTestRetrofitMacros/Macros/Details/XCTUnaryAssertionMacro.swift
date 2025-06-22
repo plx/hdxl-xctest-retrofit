@@ -3,7 +3,7 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 
-public protocol XCTUnaryAssertionMacroProtocol: XCTAssertionMacroProtocol {
+public protocol XCTUnaryAssertionMacroProtocol: XCTConditionalAssertionMacroProtocol {
   static func expansion(
     of node: some FreestandingMacroExpansionSyntax,
     in context: some MacroExpansionContext,
@@ -46,14 +46,14 @@ extension XCTUnaryAssertionMacroProtocol {
       conditionExpression: conditionExpression
     )
     
-    let rewrittenArguments = try swiftTestingMacroArguments(
+    let rewrittenArguments = try rewrittenArgumentList(
       assertionExpression: assertionExpression,
       contextArguments: contextArguments
     )
     
     return try MacroExpansionExprSyntax(
       leadingTrivia: node.leadingTrivia,
-      macroName: TokenSyntax.identifier(swiftTestingMacroName),
+      macroName: TokenSyntax.identifier(rewrittenInvocationName),
       genericArgumentClause: node.genericArgumentClause,
       leftParen: node.leftParen,
       arguments: rewrittenArguments,

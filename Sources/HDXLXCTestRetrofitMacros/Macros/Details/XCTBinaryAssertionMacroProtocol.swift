@@ -3,7 +3,9 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 
-public protocol XCTBinaryAssertionMacroProtocol: XCTAssertionMacroProtocol {
+// MARK: XCTBinaryAssertionMacroProtocol
+
+public protocol XCTBinaryAssertionMacroProtocol: XCTConditionalAssertionMacroProtocol {
   
   static func expansion(
     of node: some FreestandingMacroExpansionSyntax,
@@ -20,24 +22,14 @@ public protocol XCTBinaryAssertionMacroProtocol: XCTAssertionMacroProtocol {
   
 }
 
+// MARK: - Default Implementations
+
 extension XCTBinaryAssertionMacroProtocol {
     
   public static var mandatoryArgumentCount: Int {
     2
   }
-  
-  package static func extractBinaryAssertionComponents(
-    of node: some FreestandingMacroExpansionSyntax,
-    in context: some MacroExpansionContext
-  ) throws -> (ExprSyntax, ExprSyntax, XCTAssertionContextArguments) {
-    precondition(node.arguments.count >= mandatoryArgumentCount)
-    return (
-      node.arguments[node.arguments.startIndex].expression,
-      node.arguments[node.arguments.index(after: node.arguments.startIndex)].expression,
-      try extractContextArguments(of: node)
-    )
-  }
-  
+    
   public static func expansion(
     of node: some FreestandingMacroExpansionSyntax,
     in context: some MacroExpansionContext,
@@ -50,14 +42,14 @@ extension XCTBinaryAssertionMacroProtocol {
       rhsExpression: rhsExpression
     )
     
-    let rewrittenArguments = try swiftTestingMacroArguments(
+    let rewrittenArguments = try rewrittenArgumentList(
       assertionExpression: assertionExpression,
       contextArguments: contextArguments
     )
     
     return try MacroExpansionExprSyntax(
       leadingTrivia: node.leadingTrivia,
-      macroName: TokenSyntax.identifier(swiftTestingMacroName),
+      macroName: TokenSyntax.identifier(rewrittenInvocationName),
       genericArgumentClause: node.genericArgumentClause,
       leftParen: node.leftParen,
       arguments: rewrittenArguments,
@@ -94,14 +86,20 @@ extension XCTBinaryAssertionMacroProtocol {
   
 }
 
-extension ExprSyntax {
+// MARK: Core API
+
+extension XCTBinaryAssertionMacroProtocol {
   
-  func conditionallyWrappedInParentheses(shouldWrap: Bool) -> ExprSyntax {
-    guard shouldWrap else {
-      return self
-    }
-    
-    return "(\(self))"
+  package static func extractBinaryAssertionComponents(
+    of node: some FreestandingMacroExpansionSyntax,
+    in context: some MacroExpansionContext
+  ) throws -> (ExprSyntax, ExprSyntax, XCTAssertionContextArguments) {
+    precondition(node.arguments.count >= mandatoryArgumentCount)
+    return (
+      node.arguments[node.arguments.startIndex].expression,
+      node.arguments[node.arguments.index(after: node.arguments.startIndex)].expression,
+      try extractContextArguments(of: node)
+    )
   }
-  
+
 }

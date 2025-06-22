@@ -1,5 +1,16 @@
 import Testing
 
+// MARK: Unconditional
+@freestanding(expression)
+@discardableResult
+public macro XCTFail(
+  _ message: String = "",
+  sourceLocation: SourceLocation
+) -> Issue = #externalMacro(
+  module: "HDXLXCTestRetrofitMacros",
+  type: "XCTFailMacro"
+)
+
 // MARK: Unary
 
 @freestanding(expression)
