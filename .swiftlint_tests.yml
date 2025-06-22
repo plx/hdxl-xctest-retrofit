@@ -1,0 +1,5 @@
+parent_config: .swiftlint.yml
+  
+disabled_rules:
+  - explicit_acl # strongly preferred
+  - explicit_top_level_acl # strongly preferred

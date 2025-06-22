@@ -1,0 +1,22 @@
+{
+  "configurations": [
+    {
+      "type": "swift",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:hdxl-xctest-retrofit}",
+      "name": "Debug HDXLXCTestRetrofitClient",
+      "program": "${workspaceFolder:hdxl-xctest-retrofit}/.build/debug/HDXLXCTestRetrofitClient",
+      "preLaunchTask": "swift: Build Debug HDXLXCTestRetrofitClient"
+    },
+    {
+      "type": "swift",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:hdxl-xctest-retrofit}",
+      "name": "Release HDXLXCTestRetrofitClient",
+      "program": "${workspaceFolder:hdxl-xctest-retrofit}/.build/release/HDXLXCTestRetrofitClient",
+      "preLaunchTask": "swift: Build Release HDXLXCTestRetrofitClient"
+    }
+  ]
+}
