@@ -88,7 +88,12 @@ extension XCTAssertionMacroProtocol {
       if let messageExpression = contextArguments.messageExpression {
         LabeledExprSyntax(expression: messageExpression)
       }
-      if let fileExpression = contextArguments.fileExpression, let lineExpression = contextArguments.lineExpression {
+      if let sourceLocationExpression = contextArguments.sourceLocationExpression {
+        LabeledExprSyntax(
+          label: "sourceLocation",
+          expression: sourceLocationExpression
+        )
+      } else if let fileExpression = contextArguments.fileExpression, let lineExpression = contextArguments.lineExpression {
         LabeledExprSyntax(
           label: "sourceLocation",
           expression: "SourceLocation(file: \(fileExpression), line: \(lineExpression))" as ExprSyntax
