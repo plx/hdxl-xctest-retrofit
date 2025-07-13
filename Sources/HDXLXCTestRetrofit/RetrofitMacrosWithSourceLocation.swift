@@ -1,6 +1,17 @@
 import Testing
 
 // MARK: Unconditional
+
+/// Emulation of `XCTFail`, but accepting a `Testing.SourceLocation` parameter instead of a `file` and `line` pair.
+///
+/// - Parameters:
+///   - message: An optional description of the failure. (default: "")
+///   - sourceLocation: The source location where the failure occurred.
+///
+/// - Returns: An `Issue` describing the failure.
+///
+/// This macro unconditionally generates a test failure with an optional message.
+/// Use this when you want to explicitly fail a test at a certain point.
 @freestanding(expression)
 @discardableResult
 public macro XCTFail(
@@ -13,6 +24,14 @@ public macro XCTFail(
 
 // MARK: Unary
 
+/// Emulation of `XCTAssert`, but accepting a `Testing.SourceLocation` parameter instead of a `file` and `line` pair.
+///
+/// - Parameters:
+///   - expression: A boolean expression to evaluate.
+///   - message: An optional description of the failure. (default: "")
+///   - sourceLocation: The source location where the failure occurred.
+///
+/// Asserts that an expression is true. Generates a failure when the expression is false.
 @freestanding(expression)
 public macro XCTAssert(
   _ expression: @autoclosure () throws -> Bool,
@@ -23,6 +42,15 @@ public macro XCTAssert(
   type: "XCTAssertMacro"
 )
 
+/// Emulation of `XCTAssertTrue`, but accepting a `Testing.SourceLocation` parameter instead of a `file` and `line` pair.
+///
+/// - Parameters:
+///   - expression: A boolean expression to evaluate.
+///   - message: An optional description of the failure. (default: "")
+///   - sourceLocation: The source location where the failure occurred.
+///
+/// Asserts that an expression is true. Generates a failure when the expression is false.
+/// Functionally identical to `#XCTAssert`.
 @freestanding(expression)
 public macro XCTAssertTrue(
   _ expression: @autoclosure () throws -> Bool,
@@ -33,6 +61,14 @@ public macro XCTAssertTrue(
   type: "XCTAssertTrueMacro"
 )
 
+/// Emulation of `XCTAssertFalse`, but accepting a `Testing.SourceLocation` parameter instead of a `file` and `line` pair.
+///
+/// - Parameters:
+///   - expression: A boolean expression to evaluate.
+///   - message: An optional description of the failure. (default: "")
+///   - sourceLocation: The source location where the failure occurred.
+///
+/// Asserts that an expression is false. Generates a failure when the expression is true.
 @freestanding(expression)
 public macro XCTAssertFalse(
   _ expression: @autoclosure () throws -> Bool,
@@ -43,6 +79,14 @@ public macro XCTAssertFalse(
   type: "XCTAssertFalseMacro"
 )
 
+/// Emulation of `XCTAssertNil`, but accepting a `Testing.SourceLocation` parameter instead of a `file` and `line` pair.
+///
+/// - Parameters:
+///   - expression: An expression of optional type.
+///   - message: An optional description of the failure. (default: "")
+///   - sourceLocation: The source location where the failure occurred.
+///
+/// Asserts that an expression is nil. Generates a failure when the expression is not nil.
 @freestanding(expression)
 public macro XCTAssertNil<T>(
   _ expression: @autoclosure () throws -> T?,
@@ -53,6 +97,14 @@ public macro XCTAssertNil<T>(
   type: "XCTAssertNilMacro"
 )
 
+/// Emulation of `XCTAssertNotNil`, but accepting a `Testing.SourceLocation` parameter instead of a `file` and `line` pair.
+///
+/// - Parameters:
+///   - expression: An expression of optional type.
+///   - message: An optional description of the failure. (default: "")
+///   - sourceLocation: The source location where the failure occurred.
+///
+/// Asserts that an expression is not nil. Generates a failure when the expression is nil.
 @freestanding(expression)
 public macro XCTAssertNotNil<T>(
   _ expression: @autoclosure () throws -> T?,
@@ -63,6 +115,18 @@ public macro XCTAssertNotNil<T>(
   type: "XCTAssertNotNilMacro"
 )
 
+/// Emulation of `XCTUnwrap`, but accepting a `Testing.SourceLocation` parameter instead of a `file` and `line` pair.
+///
+/// - Parameters:
+///   - expression: An optional expression to unwrap.
+///   - message: An optional description of the failure. (default: "")
+///   - sourceLocation: The source location where the failure occurred.
+///
+/// - Returns: The unwrapped value of type T.
+///
+/// Asserts that an optional expression is not nil and returns the unwrapped value.
+/// Throws an error if the optional is nil. This is a throwing function, so test
+/// methods using it must be marked as `throws`.
 @freestanding(expression)
 public macro XCTUnwrap<T>(
   _ expression: @autoclosure () throws -> T?,
@@ -75,6 +139,16 @@ public macro XCTUnwrap<T>(
 
 // MARK: Binary
 
+/// Emulation of `XCTAssertEqual`, but accepting a `Testing.SourceLocation` parameter instead of a `file` and `line` pair.
+///
+/// - Parameters:
+///   - expression1: First value to compare.
+///   - expression2: Second value to compare.
+///   - message: An optional description of the failure. (default: "")
+///   - sourceLocation: The source location where the failure occurred.
+///
+/// Asserts that two values are equal using the `==` operator.
+/// The values must conform to `Equatable`.
 @freestanding(expression)
 public macro XCTAssertEqual<T>(
   _ expression1: @autoclosure () throws -> T,
@@ -86,6 +160,16 @@ public macro XCTAssertEqual<T>(
   type: "XCTAssertEqualMacro"
 ) where T: Equatable
 
+/// Emulation of `XCTAssertNotEqual`, but accepting a `Testing.SourceLocation` parameter instead of a `file` and `line` pair.
+///
+/// - Parameters:
+///   - expression1: First value to compare.
+///   - expression2: Second value to compare.
+///   - message: An optional description of the failure. (default: "")
+///   - sourceLocation: The source location where the failure occurred.
+///
+/// Asserts that two values are not equal using the `!=` operator.
+/// The values must conform to `Equatable`.
 @freestanding(expression)
 public macro XCTAssertNotEqual<T>(
   _ expression1: @autoclosure () throws -> T,
@@ -97,6 +181,16 @@ public macro XCTAssertNotEqual<T>(
   type: "XCTAssertNotEqualMacro"
 ) where T: Equatable
 
+/// Emulation of `XCTAssertIdentical`, but accepting a `Testing.SourceLocation` parameter instead of a `file` and `line` pair.
+///
+/// - Parameters:
+///   - expression1: First object to compare.
+///   - expression2: Second object to compare.
+///   - message: An optional description of the failure. (default: "")
+///   - sourceLocation: The source location where the failure occurred.
+///
+/// Asserts that two objects are identical (same instance) using the `===` operator.
+/// Only works with reference types (`AnyObject`).
 @freestanding(expression)
 public macro XCTAssertIdentical(
   _ expression1: @autoclosure () throws -> AnyObject?,
@@ -108,6 +202,16 @@ public macro XCTAssertIdentical(
   type: "XCTAssertIdenticalMacro"
 )
 
+/// Emulation of `XCTAssertNotIdentical`, but accepting a `Testing.SourceLocation` parameter instead of a `file` and `line` pair.
+///
+/// - Parameters:
+///   - expression1: First object to compare.
+///   - expression2: Second object to compare.
+///   - message: An optional description of the failure. (default: "")
+///   - sourceLocation: The source location where the failure occurred.
+///
+/// Asserts that two objects are not identical (different instances) using the `!==` operator.
+/// Only works with reference types (`AnyObject`).
 @freestanding(expression)
 public macro XCTAssertNotIdentical(
   _ expression1: @autoclosure () throws -> AnyObject?,
@@ -119,6 +223,16 @@ public macro XCTAssertNotIdentical(
   type: "XCTAssertNotIdenticalMacro"
 )
 
+/// Emulation of `XCTAssertGreaterThan`, but accepting a `Testing.SourceLocation` parameter instead of a `file` and `line` pair.
+///
+/// - Parameters:
+///   - expression1: First value to compare.
+///   - expression2: Second value to compare.
+///   - message: An optional description of the failure. (default: "")
+///   - sourceLocation: The source location where the failure occurred.
+///
+/// Asserts that the first value is greater than the second value using the `>` operator.
+/// Values must conform to `Comparable`.
 @freestanding(expression)
 public macro XCTAssertGreaterThan<T>(
   _ expression1: @autoclosure () throws -> T,
@@ -130,6 +244,16 @@ public macro XCTAssertGreaterThan<T>(
   type: "XCTAssertGreaterThanMacro"
 ) where T: Comparable
 
+/// Emulation of `XCTAssertGreaterThanOrEqual`, but accepting a `Testing.SourceLocation` parameter instead of a `file` and `line` pair.
+///
+/// - Parameters:
+///   - expression1: First value to compare.
+///   - expression2: Second value to compare.
+///   - message: An optional description of the failure. (default: "")
+///   - sourceLocation: The source location where the failure occurred.
+///
+/// Asserts that the first value is greater than or equal to the second value using the `>=` operator.
+/// Values must conform to `Comparable`.
 @freestanding(expression)
 public macro XCTAssertGreaterThanOrEqual<T>(
   _ expression1: @autoclosure () throws -> T,
@@ -141,6 +265,16 @@ public macro XCTAssertGreaterThanOrEqual<T>(
   type: "XCTAssertGreaterThanOrEqualMacro"
 ) where T: Comparable
 
+/// Emulation of `XCTAssertLessThan`, but accepting a `Testing.SourceLocation` parameter instead of a `file` and `line` pair.
+///
+/// - Parameters:
+///   - expression1: First value to compare.
+///   - expression2: Second value to compare.
+///   - message: An optional description of the failure. (default: "")
+///   - sourceLocation: The source location where the failure occurred.
+///
+/// Asserts that the first value is less than the second value using the `<` operator.
+/// Values must conform to `Comparable`.
 @freestanding(expression)
 public macro XCTAssertLessThan<T>(
   _ expression1: @autoclosure () throws -> T,
@@ -152,6 +286,16 @@ public macro XCTAssertLessThan<T>(
   type: "XCTAssertLessThanMacro"
 ) where T: Comparable
 
+/// Emulation of `XCTAssertLessThanOrEqual`, but accepting a `Testing.SourceLocation` parameter instead of a `file` and `line` pair.
+///
+/// - Parameters:
+///   - expression1: First value to compare.
+///   - expression2: Second value to compare.
+///   - message: An optional description of the failure. (default: "")
+///   - sourceLocation: The source location where the failure occurred.
+///
+/// Asserts that the first value is less than or equal to the second value using the `<=` operator.
+/// Values must conform to `Comparable`.
 @freestanding(expression)
 public macro XCTAssertLessThanOrEqual<T>(
   _ expression1: @autoclosure () throws -> T,
@@ -165,6 +309,19 @@ public macro XCTAssertLessThanOrEqual<T>(
 
 // MARK: Binary With Tolerance
 
+/// Emulation of `XCTAssertEqual` with tolerance, but accepting a `Testing.SourceLocation` parameter instead of a `file` and `line` pair.
+///
+/// - Parameters:
+///   - expression1: First value to compare.
+///   - expression2: Second value to compare.
+///   - accuracy: The maximum difference allowed between the values.
+///   - message: An optional description of the failure. (default: "")
+///   - sourceLocation: The source location where the failure occurred.
+///
+/// Asserts that two values are equal within a specified accuracy. This is essential
+/// for comparing floating-point numbers where exact equality may not be possible due
+/// to precision limitations. The test passes if the absolute difference between the
+/// two values is less than or equal to the accuracy parameter.
 @freestanding(expression)
 public macro XCTAssertEqual<T>(
   _ expression1: @autoclosure () throws -> T,
@@ -175,8 +332,21 @@ public macro XCTAssertEqual<T>(
 ) = #externalMacro(
   module: "HDXLXCTestRetrofitMacros",
   type: "XCTAssertEqualWithToleranceMacro"
-) where T : FloatingPoint
+) where T: FloatingPoint
 
+/// Emulation of `XCTAssertEqual` with tolerance, but accepting a `Testing.SourceLocation` parameter instead of a `file` and `line` pair.
+///
+/// - Parameters:
+///   - expression1: First value to compare.
+///   - expression2: Second value to compare.
+///   - accuracy: The maximum difference allowed between the values.
+///   - message: An optional description of the failure. (default: "")
+///   - sourceLocation: The source location where the failure occurred.
+///
+/// Asserts that two values are equal within a specified accuracy. This is essential
+/// for comparing numeric values where exact equality may not be possible due
+/// to precision limitations. The test passes if the absolute difference between the
+/// two values is less than or equal to the accuracy parameter.
 @freestanding(expression)
 public macro XCTAssertEqual<T>(
   _ expression1: @autoclosure () throws -> T,
@@ -187,8 +357,21 @@ public macro XCTAssertEqual<T>(
 ) = #externalMacro(
   module: "HDXLXCTestRetrofitMacros",
   type: "XCTAssertEqualWithToleranceMacro"
-) where T : Numeric
+) where T: Numeric
 
+/// Emulation of `XCTAssertNotEqual` with tolerance, but accepting a `Testing.SourceLocation` parameter instead of a `file` and `line` pair.
+///
+/// - Parameters:
+///   - expression1: First value to compare.
+///   - expression2: Second value to compare.
+///   - accuracy: The minimum difference required between the values.
+///   - message: An optional description of the failure. (default: "")
+///   - sourceLocation: The source location where the failure occurred.
+///
+/// Asserts that two floating-point values are not equal within a specified accuracy.
+/// This is specifically designed for comparing floating-point values where you want
+/// to ensure they differ by more than a certain threshold. The test passes if the
+/// absolute difference between the two values is greater than the accuracy parameter.
 @freestanding(expression)
 public macro XCTAssertNotEqual<T>(
   _ expression1: @autoclosure () throws -> T,
@@ -199,8 +382,21 @@ public macro XCTAssertNotEqual<T>(
 ) = #externalMacro(
   module: "HDXLXCTestRetrofitMacros",
   type: "XCTAssertNotEqualWithToleranceMacro"
-) where T : FloatingPoint
+) where T: FloatingPoint
 
+/// Emulation of `XCTAssertNotEqual` with tolerance, but accepting a `Testing.SourceLocation` parameter instead of a `file` and `line` pair.
+///
+/// - Parameters:
+///   - expression1: First value to compare.
+///   - expression2: Second value to compare.
+///   - accuracy: The minimum difference required between the values.
+///   - message: An optional description of the failure. (default: "")
+///   - sourceLocation: The source location where the failure occurred.
+///
+/// Asserts that two numeric values are not equal within a specified accuracy.
+/// This is specifically designed for comparing numeric values where you want
+/// to ensure they differ by more than a certain threshold. The test passes if the
+/// absolute difference between the two values is greater than the accuracy parameter.
 @freestanding(expression)
 public macro XCTAssertNotEqual<T>(
   _ expression1: @autoclosure () throws -> T,
@@ -211,4 +407,4 @@ public macro XCTAssertNotEqual<T>(
 ) = #externalMacro(
   module: "HDXLXCTestRetrofitMacros",
   type: "XCTAssertNotEqualWithToleranceMacro"
-) where T : Numeric
+) where T: Numeric
