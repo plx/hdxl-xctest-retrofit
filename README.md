@@ -1,104 +1,140 @@
-# hdxl-xctest-retrofit
+# HDXLXCTestRetrofit
 
-Package with macros that "retrofit" the `XCTest` assertions into macros you can invoke from Swift Testing code:
+[![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)](https://swift.org)
+[![CI](https://github.com/hdxl/hdxl-xctest-retrofit/actions/workflows/swift.yml/badge.svg)](https://github.com/hdxl/hdxl-xctest-retrofit/actions/workflows/swift.yml)
+[![Swift Package Manager](https://img.shields.io/badge/SPM-compatible-brightgreen.svg)](https://swift.org/package-manager)
+[![Platforms](https://img.shields.io/badge/Platforms-macOS%2015%2B%20|%20iOS%2018%2B%20|%20tvOS%2018%2B%20|%20watchOS%2011%2B%20|%20visionOS%202%2B-blue.svg)](https://swift.org)
+
+Seamlessly migrate XCTest assertions to Swift Testing with familiar syntax.
+
+## Overview
+
+HDXLXCTestRetrofit provides drop-in replacements for XCTest assertions that work with Swift Testing. Simply prefix your existing XCTest assertions with `#` to use the new Swift Testing framework while keeping your test logic intact.
 
 ```swift
-// this is an XCTest-style unit test:
+// Before: XCTest
 func testAddition() {
-  XCTAssertEqual(2 + 2, 4, "2 + 2 == 4, of course")
+  XCTAssertEqual(2 + 2, 4, "Math still works")
 }
 
-// ...but now it's a Swift Testing test:
+// After: Swift Testing with HDXLXCTestRetrofit
 @Test
-func testAddition() {
-  #XCTAssertEqual(2 + 2, 4, "2 + 2 == 4, of course")
-}
-
-// ...that'll expand to this:
-@Test
-func testAddition() {
-  #expect((2 + 2) == (4), "2 + 2 == 4, of course")
+func addition() {
+  #XCTAssertEqual(2 + 2, 4, "Math still works")
 }
 ```
 
-The motivating scenario was updating some packages with pre-existing, very large test suites with:
+## Installation
 
-- *a lot* of tests with *a lot * of XCTest assertions
-- *a lot* of validation functions encapsulating repeating, complicated checks
-- *a lot* of high-quality on-failure messages
-
-Given that situation, the macros in this package make porting a lot easier:
-
-1. restructure test cases to `@Suite`s
-2. restructure test methods to `@Test` functions (possibly parameterizing, tagging, etc.)
-3. keep existing code, but prefix each XCT assertions with `#`
-
-...and that's it!
-
-## API Overview
-
-The API for these macros is intended to match the original `XCTTest` APIs, and so prefixing with `#` should also work.
-
-The one extension is that each `XCTAssertion` now also has a variant taking a `Testing.SourceLocation` argument, e.g.:
+Add HDXLXCTestRetrofit to your `Package.swift`:
 
 ```swift
-/// This emulates the original `XCTAssert` signature
-@freestanding(expression)
-public macro XCTAssert(
-  _ expression: @autoclosure () throws -> Bool,
-  _ message: @autoclosure () -> String = "",
-  file: StaticString = #filePath,
-  line: UInt = #line
-) = #externalMacro(
-  module: "HDXLXCTestRetrofitMacros",
-  type: "XCTAssertMacro"
-)
+dependencies: [
+    .package(url: "https://github.com/hdxl/hdxl-xctest-retrofit.git", from: "1.0.0")
+]
+```
 
-/// This replaces `file` and `line` with a `Testing.SourceLocation` parameter
-@freestanding(expression)
-public macro XCTAssert(
-  _ expression: @autoclosure () throws -> Bool,
-  _ message: @autoclosure () -> String = "",
-  sourceLocation: SourceLocation
-) = #externalMacro(
-  module: "HDXLXCTestRetrofitMacros",
-  type: "XCTAssertMacro"
+Then add it as a dependency to your test target:
+
+```swift
+.testTarget(
+    name: "MyTests",
+    dependencies: [
+        "HDXLXCTestRetrofit",
+        // your other dependencies
+    ]
 )
 ```
 
-The purpose of these variants is for simpler interoperation with `Testing` when code is organized into validation helpers, e.g.:
+## Quick Start
+
+1. Import the package in your test files:
+   ```swift
+   import Testing
+   import HDXLXCTestRetrofit
+   ```
+
+2. Convert test classes to `@Suite` and test methods to `@Test`
+
+3. Prefix XCTest assertions with `#`:
+   ```swift
+   #XCTAssertTrue(user.isActive)
+   #XCTAssertNil(error)
+   #XCTAssertEqual(result, expected, "Custom failure message")
+   ```
+
+## Why Use This?
+
+Migrating large test suites from XCTest to Swift Testing can be daunting when you have:
+
+- Thousands of assertions across hundreds of test files
+- Custom validation helpers built on XCTest assertions
+- Carefully crafted failure messages providing context
+
+HDXLXCTestRetrofit lets you migrate incrementally:
+1. Update test structure (`@Suite`, `@Test`)
+2. Add `#` prefix to assertions
+3. Keep all your existing test logic and messages
+
+## Supported Assertions
+
+All standard XCTest assertions are supported:
+
+### Basic Assertions
+- `#XCTAssert` / `#XCTAssertTrue`
+- `#XCTAssertFalse`
+- `#XCTAssertNil` / `#XCTAssertNotNil`
+- `#XCTFail`
+- `#XCTUnwrap`
+
+### Equality & Comparison
+- `#XCTAssertEqual` / `#XCTAssertNotEqual`
+- `#XCTAssertIdentical` / `#XCTAssertNotIdentical`
+- `#XCTAssertGreaterThan` / `#XCTAssertGreaterThanOrEqual`
+- `#XCTAssertLessThan` / `#XCTAssertLessThanOrEqual`
+
+### Floating Point
+- `#XCTAssertEqual` (with accuracy parameter)
+- `#XCTAssertNotEqual` (with accuracy parameter)
+
+### Error Handling
+- `#XCTAssertThrowsError`
+- `#XCTAssertNoThrow`
+
+## Advanced Usage
+
+### Custom Validation Helpers
+
+Each assertion supports a `sourceLocation` parameter for better error reporting in helper functions:
 
 ```swift
-// nitpicky code making sure our `Comparable` conformance satisfies API contract
-func verifyComparisonTransitivity<T: Comparable>(
-  a: T,
-  b: T,
-  c: T,
-  sourceLocation: Testing.SourceLocation = #_sourceLocation
-) throws {
-  // hard failures for test-setup problems: a <= b, b <= c
-  try #require(a <= b, "Broken test steup, b/c we need a <= b but got a: \(a) and b: \(b) ", sourceLocation: sourceLocation)
-  try #require(b <= c, "Broken test steup, b/c we need a <= b but got a: \(b) and b: \(c) ", sourceLocation: sourceLocation)
+func verifyUserState(
+    _ user: User,
+    isActive: Bool,
+    sourceLocation: Testing.SourceLocation = #_sourceLocation
+) {
+    #XCTAssertEqual(user.isActive, isActive, sourceLocation: sourceLocation)
+    #XCTAssertNotNil(user.lastLogin, "Active users must have login history", sourceLocation: sourceLocation)
+}
 
-  // soft failures for property-uder-test failures
-  #XCTAssertLessThanOrEqual(a, c, "Expected a <= c, but saw: a: \(a), c: \(c)", sourceLocation: sourceLocation)
-  #XCTGreaterThanOrEqual(c, a, "Expected c >= a, but saw: c: \(c), c: \(a)", sourceLocation: sourceLocation)
-  if a == c {
-    #XCTAssertEqual(a, b, "If a <= b <= c && a == c then a == b, but a != b for a: \(a), b: \(b), c: \(c)", sourceLocation)
-  }
-  if A != b {
-    #XCTAssertNotEqual(a, c, "If a <= b <= c && a != b then a != c, but a == c for a: \(a), b: \(b), c: \(c)", sourceLocation)
-  }
+@Test func userValidation() {
+    let user = User(name: "Test")
+    verifyUserState(user, isActive: true)  // Failures point to this line
 }
 ```
 
-Not necessarily the code you'd write if starting today, but still a nice convenience for incrementally migrating the logic for heavyweight test suites.
+## Documentation
 
-## Future Directions
+- [API Documentation](https://hdxl.github.io/hdxl-xctest-retrofit/documentation/hdxlxctestretrofit/)
+- [Migration Guide](https://hdxl.github.io/hdxl-xctest-retrofit/tutorials/migrating-from-xctest)
 
-I have no plans to grow this beyond being a way to port existing XCTest code to SwifT Testing by prefixing `#`.
-Having said that, there are some XCTest capabilities I haven't addressed yet b/c they're not relevant to what I'm porting:
+## Requirements
 
-- [x] [`XCTAssertThrowsError`](https://developer.apple.com/documentation/xctest/xctassertthrowserror(_:_:file:line:_:)) - ✅ Implemented
-- [ ] [Expected failures](https://developer.apple.com/documentation/xctest/expected-failures)
+- Swift 6.0+
+- Xcode 16.0+
+- Platforms: macOS 15+, iOS 18+, tvOS 18+, watchOS 11+, visionOS 2+
+
+## License
+
+MIT License - see [LICENSE](LICENSE) file for details.
 
