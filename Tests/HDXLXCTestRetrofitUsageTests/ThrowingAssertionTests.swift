@@ -1,0 +1,67 @@
+import Testing
+import HDXLXCTestRetrofit
+
+@Suite
+struct ThrowingAssertionTests {
+  
+  enum TestError: Error, Equatable {
+    case expectedError
+    case unexpectedError
+  }
+  
+  func functionThatThrows() throws -> Int {
+    throw TestError.expectedError
+  }
+  
+  func functionThatDoesNotThrow() throws -> Int {
+    42
+  }
+  
+  @Test("XCTAssertThrowsError - Basic")
+  func testXCTAssertThrowsErrorBasic() {
+    #XCTAssertThrowsError(try functionThatThrows())
+    #XCTAssertThrowsError(try functionThatThrows(), "Should throw an error")
+  }
+  
+  @Test("XCTAssertThrowsError - With error handler")
+  func testXCTAssertThrowsErrorWithHandler() {
+    var capturedError: Error?
+    
+    #XCTAssertThrowsError(try functionThatThrows()) { error in
+      capturedError = error
+    }
+    
+    #expect(capturedError as? TestError == TestError.expectedError)
+  }
+  
+  @Test("XCTAssertThrowsError - With message and error handler")
+  func testXCTAssertThrowsErrorWithMessageAndHandler() {
+    var capturedError: Error?
+    
+    #XCTAssertThrowsError(try functionThatThrows(), "Expected to throw") { error in
+      capturedError = error
+    }
+    
+    #expect(capturedError as? TestError == TestError.expectedError)
+  }
+  
+  @Test("XCTAssertThrowsError - Complex expression")
+  func testXCTAssertThrowsErrorComplexExpression() {
+    let value = 10
+    
+    #XCTAssertThrowsError(try {
+      if value > 5 {
+        throw TestError.expectedError
+      }
+      return value
+    }())
+  }
+  
+  @Test("XCTAssertThrowsError - Validate specific error type")
+  func testXCTAssertThrowsErrorValidateErrorType() {
+    #XCTAssertThrowsError(try functionThatThrows()) { error in
+      #expect(error is TestError)
+      #expect(error as? TestError == TestError.expectedError)
+    }
+  }
+}

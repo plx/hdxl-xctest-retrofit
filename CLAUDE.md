@@ -4,39 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Swift package that provides macros to help migrate XCTest assertions to Swift Testing. It allows developers to use familiar XCTest syntax (e.g., `#XCTAssertEqual`) which expands to Swift Testing's `#expect` statements.
+This is a Swift package that provides macros to help migrate XCTest assertions to Swift Testing. It allows developers to use familiar XCTest syntax (e.g., `#XCTAssertEqual`) which expands to an equivalent expression using Swift Testing's `#expect` macro.
 
 ## Commands
 
-### Build
-```bash
-just build       # Build the package (alias: just b)
-just clean       # Clean build artifacts (alias: just c)
-```
+The project uses [just](https://github.com/casey/just) for task automation.
 
-### Testing
-```bash
-just test        # Run all tests (alias: just t)
-just test-verbose # Run tests with verbose output (alias: just tv)
-```
-
-### Linting and Formatting
-```bash
-just lint        # Run SwiftLint
-just format      # Format code with swift-format
-```
-
-### Documentation
-```bash
-just docs        # Generate documentation
-just docs-preview # Preview documentation in browser
-```
-
-### Development Workflow
-```bash
-just todo        # Show TODO comments in code
-just edit        # Open project in Xcode
-```
+During development you typically want to run `just check`, which builds the package and runs tests.
 
 ## Architecture
 

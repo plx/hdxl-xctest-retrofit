@@ -13,6 +13,9 @@ disabled_rules:
   - redundant_optional_initialization # dislike Swift's default behavior
   - large_tuple
   - for_where
+  - function_body_length # too sensitive for some macros and not worth re-configuring here
+  - function_parameter_count # too sensitive for some macro code, not worth doing on a file-by-file basis 
+  - file_length # files should be short, but don't like this limit and not going to do granular re-configuration here 
 
 opt_in_rules:
   - array_init # Array(seq) instead of seq.map { $0 }

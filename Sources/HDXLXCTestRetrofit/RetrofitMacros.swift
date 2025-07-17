@@ -446,3 +446,27 @@ public macro XCTAssertNotEqual<T>(
   module: "HDXLXCTestRetrofitMacros",
   type: "XCTAssertNotEqualWithToleranceMacro"
 ) where T: Numeric
+
+/// Emulation of `XCTAssertThrowsError`
+///
+/// - Parameters:
+///   - expression: An expression that can throw an error.
+///   - message: An optional description of the failure. (default: "")
+///   - file: The file where failure occurred. (default: `#filePath`)
+///   - line: The line number where failure occurred. (default: `#line`)
+///   - errorHandler: An optional closure to handle the error that was thrown.
+///
+/// Asserts that an expression throws an error. The test passes if the expression
+/// throws any error. If an errorHandler is provided, it receives the thrown error
+/// for additional validation.
+@freestanding(expression)
+public macro XCTAssertThrowsError<T>(
+  _ expression: @autoclosure () throws -> T,
+  _ message: @autoclosure () -> String = "",
+  file: StaticString = #filePath,
+  line: UInt = #line,
+  _ errorHandler: ((any Error) -> Void)? = nil
+) = #externalMacro(
+  module: "HDXLXCTestRetrofitMacros",
+  type: "XCTAssertThrowsErrorMacro"
+)

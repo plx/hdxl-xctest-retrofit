@@ -21,7 +21,8 @@ let testMacros: [String: XCTAssertionMacroProtocol.Type] = [
   "XCTAssertGreaterThan": XCTAssertGreaterThanMacro.self,
   "XCTAssertGreaterThanOrEqual": XCTAssertGreaterThanOrEqualMacro.self,
   "XCTAssertLessThan": XCTAssertLessThanMacro.self,
-  "XCTAssertLessThanOrEqual": XCTAssertLessThanOrEqualMacro.self
+  "XCTAssertLessThanOrEqual": XCTAssertLessThanOrEqualMacro.self,
+  "XCTAssertThrowsError": XCTAssertThrowsErrorMacro.self
 ]
 #endif
 
@@ -96,6 +97,93 @@ final class HDXLXCTestRetrofitMacrosTests: XCTestCase {
       expandedSource:
       """
       #expect((a) == (b), "boo!", sourceLocation: SourceLocation(file: file, line: line))
+      """,
+      macros: testMacros
+    )
+#endif
+  }
+  
+  func testXCTAssertThrowsErrorExpansion() throws {
+#if canImport(HDXLXCTestRetrofitMacros)
+    assertTrimmedMacroExpansion(
+      """
+      #XCTAssertThrowsError(try throwingFunction())
+      """,
+      expandedSource:
+      """
+      _ = #expect(throws: (any Error).self) {
+          (try throwingFunction())
+      }
+      """,
+      macros: testMacros
+    )
+    
+    assertTrimmedMacroExpansion(
+      """
+      #XCTAssertThrowsError(try throwingFunction(), "Expected to throw")
+      """,
+      expandedSource:
+      """
+      _ = #expect(throws: (any Error).self, "Expected to throw") {
+          (try throwingFunction())
+      }
+      """,
+      macros: testMacros
+    )
+    
+    assertTrimmedMacroExpansion(
+      """
+      #XCTAssertThrowsError(try throwingFunction(), "Expected to throw", file: file, line: line)
+      """,
+      expandedSource:
+      """
+      _ = #expect(throws: (any Error).self, "Expected to throw", sourceLocation: SourceLocation(file: file, line: line)) {
+          (try throwingFunction())
+      }
+      """,
+      macros: testMacros
+    )
+    
+    assertTrimmedMacroExpansion(
+      """
+      #XCTAssertThrowsError(try throwingFunction()) { error in
+        print(error)
+      }
+      """,
+      expandedSource:
+      """
+      {
+        do {
+          _ = (try throwingFunction())
+          Issue.record("Expected an error to be thrown")
+        } catch {
+          ({ error in
+        print(error)
+              })(error)
+        }
+      }()
+      """,
+      macros: testMacros
+    )
+    
+    assertTrimmedMacroExpansion(
+      """
+      #XCTAssertThrowsError(try throwingFunction(), "custom message") { error in
+        print(error)
+      }
+      """,
+      expandedSource:
+      """
+      {
+        do {
+          _ = (try throwingFunction())
+          Issue.record("custom message")
+        } catch {
+          ({ error in
+        print(error)
+              })(error)
+        }
+      }()
       """,
       macros: testMacros
     )
