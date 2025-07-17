@@ -12,6 +12,9 @@ mod docs './commands/docs.just'
 # linting
 mod lint './commands/lint.just'
 
+# formatting
+mod format './commands/format.just'
+
 # checking for todos
 mod todos './commands/todos.just'
 

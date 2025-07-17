@@ -7,7 +7,7 @@ default:
     @just --list docs --unsorted
 
 [group('generate')]
-generate-developer destination:
+generate-documentation destination:
     # generates documentation
     swift package --allow-writing-to-directory {{destination}} generate-documentation \
         --enable-experimental-combined-documentation \
