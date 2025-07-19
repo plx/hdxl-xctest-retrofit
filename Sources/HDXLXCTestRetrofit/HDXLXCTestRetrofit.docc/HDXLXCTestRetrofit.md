@@ -42,16 +42,14 @@ HDXLXCTestRetrofit bridges the gap between XCTest and Swift Testing, allowing yo
 
 ### Floating Point Assertions
 
-- ``XCTAssertEqual(_:_:accuracy:_:file:line:)-8xfxw``
-- ``XCTAssertNotEqual(_:_:accuracy:_:file:line:)-68yf5``
+- ``XCTAssertEqual(_:_:accuracy:_:file:line:)-v2e5``
+- ``XCTAssertNotEqual(_:_:accuracy:_:file:line:)-6ahod``
 
 ### Error Handling
 
 - ``XCTAssertThrowsError(_:_:file:line:_:)``
-- ``XCTAssertNoThrow(_:_:file:line:)``
 - ``XCTUnwrap(_:_:file:line:)``
 
 ### Advanced Usage
 
-- <doc:UsingSourceLocation>
-- <doc:ValidationHelpers>
+- <doc:MigratingValidationFunctions>

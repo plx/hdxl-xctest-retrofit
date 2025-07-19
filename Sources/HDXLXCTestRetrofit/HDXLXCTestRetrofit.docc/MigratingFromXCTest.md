@@ -86,12 +86,12 @@ Simply prefix each XCTest assertion with `#`:
 | `XCTAssertNil(value)` | `#XCTAssertNil(value)` |
 | `XCTAssertThrowsError(try risky())` | `#XCTAssertThrowsError(try risky())` |
 
-### Step 4: Migrate Helper Functions
+### Step 4: Handle Helper Functions
 
-Update your test helpers to use Swift Testing's source location:
+If your tests use validation helpers, you have options. See <doc:MigratingValidationFunctions> for detailed guidance, but here's a quick example:
 
 ```swift
-// Before
+// Your existing helper - just add # to assertions
 func verifyCart(
     _ cart: ShoppingCart,
     itemCount: Int,
@@ -99,19 +99,8 @@ func verifyCart(
     file: StaticString = #file,
     line: UInt = #line
 ) {
-    XCTAssertEqual(cart.items.count, itemCount, file: file, line: line)
-    XCTAssertEqual(cart.total, total, accuracy: 0.01, file: file, line: line)
-}
-
-// After
-func verifyCart(
-    _ cart: ShoppingCart,
-    itemCount: Int,
-    total: Double,
-    sourceLocation: Testing.SourceLocation = #_sourceLocation
-) {
-    #XCTAssertEqual(cart.items.count, itemCount, sourceLocation: sourceLocation)
-    #XCTAssertEqual(cart.total, total, accuracy: 0.01, sourceLocation: sourceLocation)
+    #XCTAssertEqual(cart.items.count, itemCount, file: file, line: line)
+    #XCTAssertEqual(cart.total, total, accuracy: 0.01, file: file, line: line)
 }
 ```
 
