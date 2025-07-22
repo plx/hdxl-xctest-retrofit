@@ -470,3 +470,27 @@ public macro XCTAssertThrowsError<T>(
   module: "HDXLXCTestRetrofitMacros",
   type: "XCTAssertThrowsErrorMacro"
 )
+
+/// Emulation of `XCTAssertNoThrow`
+///
+/// - Parameters:
+///   - expression: An expression that can throw an error.
+///   - message: An optional description of the failure. (default: "")
+///   - file: The file where failure occurred. (default: `#filePath`)
+///   - line: The line number where failure occurred. (default: `#line`)
+///
+/// - Returns: The value returned by the expression if it doesn't throw.
+///
+/// Asserts that an expression does not throw an error. The test passes if the
+/// expression completes without throwing. If an error is thrown, the test fails
+/// and the error is re-thrown.
+@freestanding(expression)
+public macro XCTAssertNoThrow<T>(
+  _ expression: @autoclosure () throws -> T,
+  _ message: @autoclosure () -> String = "",
+  file: StaticString = #filePath,
+  line: UInt = #line
+) -> T = #externalMacro(
+  module: "HDXLXCTestRetrofitMacros",
+  type: "XCTAssertNoThrowMacro"
+)

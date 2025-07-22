@@ -13,7 +13,7 @@ This is a Swift package that provides macros to help migrate XCTest assertions t
 
 The project uses [just](https://github.com/casey/just) for task automation.
 
-During development you typically want to run `just check`, which builds the package and runs tests.
+During development you typically want to run `just check`, which builds the package and runs tests. Run this frequently during macro development as Swift's error messages for macro expansion issues can be cryptic.
 
 ## Architecture
 
@@ -37,8 +37,12 @@ During development you typically want to run `just check`, which builds the pack
 ### Testing Strategy
 
 - **Implementation Tests** (`Tests/HDXLXCTestRetrofitTests/`): Verify macro expansion produces correct syntax
+  - Use `assertTrimmedMacroExpansion` helper to test exact macro output
+  - Test all parameter combinations: basic, with message, with source location
 - **Usage Tests** (`Tests/HDXLXCTestRetrofitUsageTests/`): Verify macros work correctly in real test scenarios
-- Tests are organized by assertion type (binary, unary, tolerance-based) and outcome (success, failure)
+  - Separate files for success and failure cases
+  - Use `withKnownIssue` blocks for expected failures
+- Tests are organized by assertion type (binary, unary, tolerance-based, throwing) and outcome (success, failure)
 
 ## Code Style
 
@@ -58,8 +62,10 @@ During development you typically want to run `just check`, which builds the pack
 
 1. Add macro declaration in `Sources/HDXLXCTestRetrofit/RetrofitMacros.swift`
 2. Implement macro in `Sources/HDXLXCTestRetrofitMacros/Macros/Concrete/`
-3. Add corresponding tests in both test suites
-4. Update documentation if needed
+3. Register the macro in `Sources/HDXLXCTestRetrofitMacros/Plugin.swift`
+4. Add implementation tests in `Tests/HDXLXCTestRetrofitTests/`
+5. Add usage tests in `Tests/HDXLXCTestRetrofitUsageTests/` (both success and failure cases)
+6. Update documentation in `HDXLXCTestRetrofit.docc/HDXLXCTestRetrofit.md`
 
 ## CI/CD
 
@@ -67,8 +73,32 @@ During development you typically want to run `just check`, which builds the pack
 - **Documentation**: Auto-published to GitHub Pages on push to main
 - **Badges**: README includes CI status, Swift version, platform support, and SPM compatibility badges
 
+## Macro Implementation Guidelines
+
+### Working with String Interpolation in Macros
+- When building messages with string interpolation in macro expansions, be careful with operator precedence
+- Direct string concatenation (`+`) can cause issues with Swift's type system
+- For simple cases, use string interpolation: `"Error: \\(value)"`
+- For conditional messages, consider using the full conditional within the interpolation
+
+### Handling Throwing Expressions
+- Be mindful of `try` expression placement in macro expansions
+- The macro's autoclosure parameter already handles `throws`, so don't double-wrap with `try`
+- When the macro itself needs to throw, wrap the entire expansion in `try { ... }()`
+
+### Testing Patterns
+- Always test both success and failure paths
+- Use `withKnownIssue` for expected failures in test suites
+- For macros that return values (like `XCTAssertNoThrow`), ensure tests verify the return value
+- Test with various expression types: simple function calls, closures, complex expressions
+
+### Following Existing Patterns
+- Study similar macros before implementing (e.g., `XCTAssertThrowsError` for `XCTAssertNoThrow`)
+- Use `XCTAssertionContextArguments` for consistent source location handling
+- Follow the established pattern for `LabeledExprListSyntax` construction
+- Ensure proper use of `conditionallyWrappedInParentheses` for complex expressions
+
 ## Known Limitations
 
 - Expected failures feature is not yet implemented
 - Only supports platforms with Swift Testing (macOS 15+, iOS 18+, etc.)
-- `XCTAssertNoThrow` is not implemented (use Swift Testing's native error handling instead)

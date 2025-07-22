@@ -48,6 +48,7 @@ HDXLXCTestRetrofit bridges the gap between XCTest and Swift Testing, allowing yo
 ### Error Handling
 
 - ``XCTAssertThrowsError(_:_:file:line:_:)``
+- ``XCTAssertNoThrow(_:_:file:line:)``
 - ``XCTUnwrap(_:_:file:line:)``
 
 ### Advanced Usage

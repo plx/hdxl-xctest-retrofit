@@ -64,4 +64,58 @@ struct ThrowingAssertionTests {
       #expect(error as? TestError == TestError.expectedError)
     }
   }
+  
+  // MARK: - XCTAssertNoThrow Tests
+  
+  @Test("XCTAssertNoThrow - Basic success")
+  func testXCTAssertNoThrowBasic() throws {
+    let result = #XCTAssertNoThrow(functionThatDoesNotThrow())
+    #expect(result == 42)
+  }
+  
+  @Test("XCTAssertNoThrow - With custom message")
+  func testXCTAssertNoThrowWithMessage() throws {
+    let result = #XCTAssertNoThrow(functionThatDoesNotThrow(), "Should not throw")
+    #expect(result == 42)
+  }
+  
+  @Test("XCTAssertNoThrow - Complex expression")
+  func testXCTAssertNoThrowComplexExpression() throws {
+    let value = 3
+    
+    let result = #XCTAssertNoThrow({
+      if value > 5 {
+        throw TestError.unexpectedError
+      }
+      return value * 2
+    }())
+    
+    #expect(result == 6)
+  }
+  
+  @Test("XCTAssertNoThrow - With optional unwrapping")
+  func testXCTAssertNoThrowOptionalUnwrapping() throws {
+    let optionalValue: Int? = 100
+    
+    let result = #XCTAssertNoThrow({
+      guard let value = optionalValue else {
+        throw TestError.unexpectedError
+      }
+      return value
+    }())
+    
+    #expect(result == 100)
+  }
+  
+  @Test("XCTAssertNoThrow - Void return type")
+  func testXCTAssertNoThrowVoidReturn() throws {
+    var sideEffect = false
+    
+    #XCTAssertNoThrow({
+      sideEffect = true
+      // Function that doesn't throw and returns Void
+    }())
+    
+    #expect(sideEffect == true)
+  }
 }

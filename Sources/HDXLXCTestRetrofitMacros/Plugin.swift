@@ -28,7 +28,8 @@ struct HDXLXCTestRetrofitPlugin: CompilerPlugin {
     XCTAssertEqualWithToleranceMacro.self,
     XCTAssertNotEqualWithToleranceMacro.self,
     
-    XCTAssertThrowsErrorMacro.self
+    XCTAssertThrowsErrorMacro.self,
+    XCTAssertNoThrowMacro.self
   ]
 }
 

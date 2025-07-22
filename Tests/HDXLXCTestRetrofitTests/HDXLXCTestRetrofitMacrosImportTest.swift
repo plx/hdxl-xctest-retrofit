@@ -22,7 +22,8 @@ let testMacros: [String: XCTAssertionMacroProtocol.Type] = [
   "XCTAssertGreaterThanOrEqual": XCTAssertGreaterThanOrEqualMacro.self,
   "XCTAssertLessThan": XCTAssertLessThanMacro.self,
   "XCTAssertLessThanOrEqual": XCTAssertLessThanOrEqualMacro.self,
-  "XCTAssertThrowsError": XCTAssertThrowsErrorMacro.self
+  "XCTAssertThrowsError": XCTAssertThrowsErrorMacro.self,
+  "XCTAssertNoThrow": XCTAssertNoThrowMacro.self
 ]
 #endif
 
@@ -97,6 +98,64 @@ final class HDXLXCTestRetrofitMacrosTests: XCTestCase {
       expandedSource:
       """
       #expect((a) == (b), "boo!", sourceLocation: SourceLocation(file: file, line: line))
+      """,
+      macros: testMacros
+    )
+#endif
+  }
+  
+  func testXCTAssertNoThrowExpansion() throws {
+#if canImport(HDXLXCTestRetrofitMacros)
+    assertTrimmedMacroExpansion(
+      """
+      #XCTAssertNoThrow(nonThrowingFunction())
+      """,
+      expandedSource:
+      """
+      try {
+        do {
+          return try nonThrowingFunction()
+        } catch {
+          Issue.record("Unexpected error thrown: \\(error)")
+          throw error
+        }
+      }()
+      """,
+      macros: testMacros
+    )
+    
+    assertTrimmedMacroExpansion(
+      """
+      #XCTAssertNoThrow(nonThrowingFunction(), "Should not throw")
+      """,
+      expandedSource:
+      """
+      try {
+        do {
+          return try nonThrowingFunction()
+        } catch {
+          Issue.record("Unexpected error thrown: \\(error) - \\(("Should not throw"))")
+          throw error
+        }
+      }()
+      """,
+      macros: testMacros
+    )
+    
+    assertTrimmedMacroExpansion(
+      """
+      #XCTAssertNoThrow(nonThrowingFunction(), "Should not throw", file: file, line: line)
+      """,
+      expandedSource:
+      """
+      try {
+        do {
+          return try nonThrowingFunction()
+        } catch {
+          Issue.record("Unexpected error thrown: \\(error) - \\(("Should not throw"))", sourceLocation: SourceLocation(file: file, line: line))
+          throw error
+        }
+      }()
       """,
       macros: testMacros
     )
