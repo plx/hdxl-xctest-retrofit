@@ -20,9 +20,17 @@ During development you typically want to run `just check`, which builds the pack
 ### Core Components
 
 1. **Macro Declarations** (`Sources/HDXLXCTestRetrofit/`): Public API exposing XCTest-style macros that users import
+   - this is the primary surface area for users of this package
+   - *only* contains declarations (no implementation—this declaration/implementation split is inherent to Swift macros)
+   - contains two parallel sets of macro declarations: 
+       - `RetrofitMacros.swift`: Primary declarations exactly matching original `XCTest` assertion signatures (e.g. taking `file` and `line` parameters for attribution)
+       - `RetrofitMacrosWithSourceLocation.swift`: Additional, analogous declarations, but replacing `file` and `line` parameters with `sourceLocation`
 2. **Macro Implementations** (`Sources/HDXLXCTestRetrofitMacros/`): The actual macro expansion logic
    - `Macros/Concrete/`: Individual macro implementations for each XCTest assertion
    - `Macros/Details/`: Supporting protocols and types for macro expansion
+3. **Macro Client**
+   - a bare-bones executable target (`HDXLXCTestRetrofitClient`) that imports the package
+   - not part of public API—just used for manual testing during development
 3. **Documentation** (`Sources/HDXLXCTestRetrofit/HDXLXCTestRetrofit.docc/`): Swift-DocC documentation
    - Main landing page with API groupings
    - Getting started guide
@@ -41,7 +49,7 @@ During development you typically want to run `just check`, which builds the pack
   - Test all parameter combinations: basic, with message, with source location
 - **Usage Tests** (`Tests/HDXLXCTestRetrofitUsageTests/`): Verify macros work correctly in real test scenarios
   - Separate files for success and failure cases
-  - Use `withKnownIssue` blocks for expected failures
+  - Uses `withKnownIssue` blocks for expected failures (e.g. to check `#XCTAssertTrue(false)` fails the test)
 - Tests are organized by assertion type (binary, unary, tolerance-based, throwing) and outcome (success, failure)
 
 ## Code Style
@@ -100,5 +108,5 @@ During development you typically want to run `just check`, which builds the pack
 
 ## Known Limitations
 
-- Expected failures feature is not yet implemented
+- Some `XCTest` features aren't supported (issue recording, asynchronous expectations, expected failures, test-skipping, etc.)
 - Only supports platforms with Swift Testing (macOS 15+, iOS 18+, etc.)

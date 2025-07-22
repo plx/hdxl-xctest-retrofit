@@ -15,10 +15,11 @@ HDXLXCTestRetrofit bridges the gap between XCTest and Swift Testing, allowing yo
 
 ## Topics
 
-### Getting Started
+### Guides & Articles
 
 - <doc:GettingStarted>
 - <doc:MigratingFromXCTest>
+- <doc:MigratingValidationFunctions>
 
 ### Essential Assertions
 
@@ -50,7 +51,3 @@ HDXLXCTestRetrofit bridges the gap between XCTest and Swift Testing, allowing yo
 - ``XCTAssertThrowsError(_:_:file:line:_:)``
 - ``XCTAssertNoThrow(_:_:file:line:)``
 - ``XCTUnwrap(_:_:file:line:)``
-
-### Advanced Usage
-
-- <doc:MigratingValidationFunctions>

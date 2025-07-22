@@ -44,7 +44,13 @@ import HDXLXCTestRetrofit
 - changing the `XCTestCase` class to a struct
 - adding the `@Suite` attribute
 - changing test methods to `@Test` functions
-- replceadopt the retrofit macros all existing `XCTest` assertions with `#`
+- adopt the retrofit macros by prefixing all existing `XCTest` assertions with `#`:
+  - change `XCTAssertEqual` to `#XCTAssertEqual`
+  - change `XCTAssertTrue` to `#XCTAssertTrue`
+  - change `XCTAssertNil` to `#XCTAssertNil` 
+  - (and so on and so forth)
+
+Here's a concrete example:
 
 ```swift
 // Before
@@ -68,18 +74,21 @@ struct UserTests {
 }
 ```
 
-At this point, you will have successfully migrated your unit test from `XCTest` to Swift Testing, and without having materially changed the test logic or assertions. Although you won't (yet) have taken full advantage of Swift Testing's features, you'll also have side-stepped the risk of a more-"bespoke" migration introducing logical errors into your test code. 
+By this point, you've successfully ported `UserTests` from `XCTest` to Swift Testing.
+In fact, you've done so *without* changing any test logic or assertions, thereby side-stepping the risk of introducing logical errors during your port.
+
+For more discussion of the migration process, see <doc:MigratingFromXCTest> (and potentially also <doc:MigratingValidationFunctions>, which has additional tips for handling validation functions).
 
 ## Limitations
 
-This package does *not* include any migration support for `XCTest` API beyond the assertions; in particular, at this time it doesn't handle:
+This package does *not* include any migration support for `XCTest` API beyond the assertions; in particular, at this time it doesn't handle things like:
 
+- `XCTSkip`, `XCTExpectFailure`, etc.
 - `XCTTestExpectation` (and friends)
-- `XCTExpectFailure` (and friends)
 - `XCTestCase.continueAfterFailure`
 - `XCTestCase.record` (etc.)
 
-These omissions are intentional: whereas the assertions can be migrated on an individual basis and in a purely-mechanical fashion, mapping the above capabilities into Swift Testing would typically requires contextually-dependent structural changes to the test code.
+These omissions are intentional, because they're out-of-scope: for tests using those constructs you'll need to make more-structural changes to your test code in order to migrate to Swift Testing.
 
 ## What's Next?
 
