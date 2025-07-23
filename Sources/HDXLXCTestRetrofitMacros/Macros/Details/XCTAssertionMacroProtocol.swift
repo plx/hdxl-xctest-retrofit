@@ -5,7 +5,7 @@ import SwiftSyntaxMacros
 
 // MARK: XCTAssertionMacroProtocol
 
-public protocol XCTAssertionMacroProtocol: ExpressionMacro, SendableMetatype {
+public protocol XCTAssertionMacroProtocol: ExpressionMacro {
   
   static var mandatoryArgumentCount: Int { get }
   static var rewrittenInvocationName: String { get }
