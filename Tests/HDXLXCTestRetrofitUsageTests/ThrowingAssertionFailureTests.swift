@@ -65,8 +65,8 @@ struct ThrowingAssertionFailureTests {
     do {
       _ = try withKnownIssue {
         try #XCTAssertNoThrow(functionThatThrows())
+        Issue.record("Expected error to be thrown")
       }
-      Issue.record("Expected error to be thrown")
     } catch let error as TestError {
       #expect(error == .expectedError)
     } catch {

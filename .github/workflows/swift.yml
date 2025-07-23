@@ -12,12 +12,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-15, macos-14]
-        xcode: ['16.2', '16.1', '16.0']
-        exclude:
-          # Xcode 16.2 requires macOS 15
-          - os: macos-14
-            xcode: '16.2'
+        os: [macos-15]
+        xcode: ['16.2']
     
     steps:
     - uses: actions/checkout@v4

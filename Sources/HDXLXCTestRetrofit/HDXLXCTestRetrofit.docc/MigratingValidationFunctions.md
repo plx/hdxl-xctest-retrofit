@@ -76,3 +76,4 @@ Migrating validation functions to `HDXLXCTestRetrofit` is straightforward:
 
 - *necessary*: prefix `XCTTest` assertions with `#`
 - *optional*: migrate `file` and `line` parameters to `SourceLocation`
+

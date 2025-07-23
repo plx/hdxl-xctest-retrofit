@@ -94,4 +94,3 @@ These omissions are intentional, because they're out-of-scope: for tests using t
 
 - See <doc:MigratingFromXCTest> for a complete migration guide
 - Learn about <doc:MigratingValidationFunctions> if your tests use validation helpers
-- Check the API documentation for all available assertions
