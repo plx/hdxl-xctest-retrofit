@@ -73,7 +73,8 @@ let package = Package(
         "HDXLXCTestRetrofit"
       ]
     ),
-  ]
+  ],
+  swiftLanguageModes: [.v6, .v5]
 )
 
 

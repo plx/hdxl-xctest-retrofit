@@ -5,7 +5,13 @@ import SwiftSyntaxMacros
 
 // MARK: XCTAssertionMacroProtocol
 
-public protocol XCTAssertionMacroProtocol: ExpressionMacro {
+#if swift(>=6.1)
+public protocol _XCTAssertionMacroProtocol: SendableMetatype { }
+#else
+public protocol XCTAssertionMacroProtocol { }
+#endif
+
+public protocol XCTAssertionMacroProtocol: ExpressionMacro, _XCTAssertionMacroProtocol {
   
   static var mandatoryArgumentCount: Int { get }
   static var rewrittenInvocationName: String { get }

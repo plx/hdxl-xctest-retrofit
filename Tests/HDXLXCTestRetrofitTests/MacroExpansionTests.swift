@@ -8,29 +8,37 @@ import HDXLXCTestRetrofitMacros
 // Macro implementations build for the host, so the corresponding module is not available when cross-compiling. Cross-compiled tests may still make use of the macro itself in end-to-end tests.
 #if canImport(HDXLXCTestRetrofitMacros)
 
-let testMacros: [String: XCTAssertionMacroProtocol.Type] = [
-  "XCTAssert": XCTAssertMacro.self,
-  "XCTAssertTrue": XCTAssertTrueMacro.self,
-  "XCTAssertFalse": XCTAssertFalseMacro.self,
-  "XCTAssertNotNil": XCTAssertNotNilMacro.self,
-  "XCTAssertNil": XCTAssertNilMacro.self,
-  "XCTAssertEqual": XCTAssertEqualMacro.self,
-  "XCTAssertNotEqual": XCTAssertNotEqualMacro.self,
-  "XCTAssertIdentical": XCTAssertIdenticalMacro.self,
-  "XCTAssertNotIdentical": XCTAssertNotIdenticalMacro.self,
-  "XCTAssertGreaterThan": XCTAssertGreaterThanMacro.self,
-  "XCTAssertGreaterThanOrEqual": XCTAssertGreaterThanOrEqualMacro.self,
-  "XCTAssertLessThan": XCTAssertLessThanMacro.self,
-  "XCTAssertLessThanOrEqual": XCTAssertLessThanOrEqualMacro.self,
-  "XCTAssertThrowsError": XCTAssertThrowsErrorMacro.self,
-  "XCTAssertNoThrow": XCTAssertNoThrowMacro.self
-]
+private func allTestMacros() -> [String: XCTAssertionMacroProtocol.Type] {
+  [
+    "XCTAssert": XCTAssertMacro.self,
+    "XCTAssertTrue": XCTAssertTrueMacro.self,
+    "XCTAssertFalse": XCTAssertFalseMacro.self,
+    "XCTAssertNotNil": XCTAssertNotNilMacro.self,
+    "XCTAssertNil": XCTAssertNilMacro.self,
+    "XCTAssertEqual": XCTAssertEqualMacro.self,
+    "XCTAssertNotEqual": XCTAssertNotEqualMacro.self,
+    "XCTAssertIdentical": XCTAssertIdenticalMacro.self,
+    "XCTAssertNotIdentical": XCTAssertNotIdenticalMacro.self,
+    "XCTAssertGreaterThan": XCTAssertGreaterThanMacro.self,
+    "XCTAssertGreaterThanOrEqual": XCTAssertGreaterThanOrEqualMacro.self,
+    "XCTAssertLessThan": XCTAssertLessThanMacro.self,
+    "XCTAssertLessThanOrEqual": XCTAssertLessThanOrEqualMacro.self,
+    "XCTAssertThrowsError": XCTAssertThrowsErrorMacro.self,
+    "XCTAssertNoThrow": XCTAssertNoThrowMacro.self
+  ]
+}
+
+#if swift(>=6.1)
+let testMacros: [String: XCTAssertionMacroProtocol.Type] = allTestMacros()
+#else
+nonisolated(unsafe) let testMacros: [String: XCTAssertionMacroProtocol.Type] = allTestMacros()
+#endif
 #endif
 
-final class HDXLXCTestRetrofitMacrosTests: XCTestCase {
+final class MacroExpansionTests: XCTestCase {
   
   
-  func testXCTAssertExpansion() throws {
+func testXCTAssertExpansion() throws {
 #if canImport(HDXLXCTestRetrofitMacros)
     assertTrimmedMacroExpansion(
       """
@@ -112,12 +120,11 @@ final class HDXLXCTestRetrofitMacrosTests: XCTestCase {
       """,
       expandedSource:
       """
-      try {
+      {
         do {
-          return try nonThrowingFunction()
-        } catch {
+          let _ =  try (nonThrowingFunction())
+        } catch let error {
           Issue.record("Unexpected error thrown: \\(error)")
-          throw error
         }
       }()
       """,
@@ -130,12 +137,11 @@ final class HDXLXCTestRetrofitMacrosTests: XCTestCase {
       """,
       expandedSource:
       """
-      try {
+      {
         do {
-          return try nonThrowingFunction()
-        } catch {
-          Issue.record("Unexpected error thrown: \\(error) - \\(("Should not throw"))")
-          throw error
+          let _ =  try (nonThrowingFunction())
+        } catch let error {
+          Issue.record("Unexpected error thrown: \\(error) - \\("Should not throw")")
         }
       }()
       """,
@@ -148,12 +154,11 @@ final class HDXLXCTestRetrofitMacrosTests: XCTestCase {
       """,
       expandedSource:
       """
-      try {
+      {
         do {
-          return try nonThrowingFunction()
-        } catch {
-          Issue.record("Unexpected error thrown: \\(error) - \\(("Should not throw"))", sourceLocation: SourceLocation(file: file, line: line))
-          throw error
+          let _ =  try (nonThrowingFunction())
+        } catch let error {
+          Issue.record("Unexpected error thrown: \\(error) - \\("Should not throw")")
         }
       }()
       """,
@@ -161,7 +166,7 @@ final class HDXLXCTestRetrofitMacrosTests: XCTestCase {
     )
 #endif
   }
-  
+
   func testXCTAssertThrowsErrorExpansion() throws {
 #if canImport(HDXLXCTestRetrofitMacros)
     assertTrimmedMacroExpansion(
@@ -170,7 +175,7 @@ final class HDXLXCTestRetrofitMacrosTests: XCTestCase {
       """,
       expandedSource:
       """
-      _ = #expect(throws: (any Error).self) {
+      #expect(throws: (any Error).self) {
           (try throwingFunction())
       }
       """,
@@ -183,7 +188,7 @@ final class HDXLXCTestRetrofitMacrosTests: XCTestCase {
       """,
       expandedSource:
       """
-      _ = #expect(throws: (any Error).self, "Expected to throw") {
+      #expect(throws: (any Error).self, "Expected to throw") {
           (try throwingFunction())
       }
       """,
@@ -196,7 +201,7 @@ final class HDXLXCTestRetrofitMacrosTests: XCTestCase {
       """,
       expandedSource:
       """
-      _ = #expect(throws: (any Error).self, "Expected to throw", sourceLocation: SourceLocation(file: file, line: line)) {
+      #expect(throws: (any Error).self, "Expected to throw", sourceLocation: SourceLocation(file: file, line: line)) {
           (try throwingFunction())
       }
       """,
@@ -212,14 +217,16 @@ final class HDXLXCTestRetrofitMacrosTests: XCTestCase {
       expandedSource:
       """
       {
-        do {
-          _ = (try throwingFunction())
-          Issue.record("Expected an error to be thrown")
-        } catch {
-          ({ error in
-        print(error)
-              })(error)
+        let __macro_local_11thrownErrorfMu_ = #expect(throws: (any Error).self) {
+            (try throwingFunction())
         }
+        if let __macro_local_11thrownErrorfMu_ {
+          { error in
+            print(error)
+          }(__macro_local_11thrownErrorfMu_)
+        }
+
+        return __macro_local_11thrownErrorfMu_
       }()
       """,
       macros: testMacros
@@ -234,14 +241,16 @@ final class HDXLXCTestRetrofitMacrosTests: XCTestCase {
       expandedSource:
       """
       {
-        do {
-          _ = (try throwingFunction())
-          Issue.record("custom message")
-        } catch {
-          ({ error in
-        print(error)
-              })(error)
+        let __macro_local_11thrownErrorfMu_ = #expect(throws: (any Error).self, "custom message") {
+            (try throwingFunction())
         }
+        if let __macro_local_11thrownErrorfMu_ {
+          { error in
+            print(error)
+          }(__macro_local_11thrownErrorfMu_)
+        }
+
+        return __macro_local_11thrownErrorfMu_
       }()
       """,
       macros: testMacros

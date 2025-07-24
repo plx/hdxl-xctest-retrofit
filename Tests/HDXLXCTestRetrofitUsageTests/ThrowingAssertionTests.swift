@@ -69,45 +69,39 @@ struct ThrowingAssertionTests {
   
   @Test("XCTAssertNoThrow - Basic success")
   func testXCTAssertNoThrowBasic() throws {
-    let result = #XCTAssertNoThrow(functionThatDoesNotThrow())
-    #expect(result == 42)
+    #XCTAssertNoThrow(functionThatDoesNotThrow())
   }
   
   @Test("XCTAssertNoThrow - With custom message")
   func testXCTAssertNoThrowWithMessage() throws {
-    let result = #XCTAssertNoThrow(functionThatDoesNotThrow(), "Should not throw")
-    #expect(result == 42)
+    #XCTAssertNoThrow(functionThatDoesNotThrow(), "Should not throw")
   }
   
   @Test("XCTAssertNoThrow - Complex expression")
   func testXCTAssertNoThrowComplexExpression() throws {
     let value = 3
     
-    let result = #XCTAssertNoThrow({
+    #XCTAssertNoThrow({
       if value > 5 {
         throw TestError.unexpectedError
       }
       return value * 2
     }())
-    
-    #expect(result == 6)
   }
   
   @Test("XCTAssertNoThrow - With optional unwrapping")
   func testXCTAssertNoThrowOptionalUnwrapping() throws {
     let optionalValue: Int? = 100
     
-    let result = #XCTAssertNoThrow({
+    #XCTAssertNoThrow({
       guard let value = optionalValue else {
         throw TestError.unexpectedError
       }
       return value
     }())
-    
-    #expect(result == 100)
   }
   
-  @Test("XCTAssertNoThrow - Void return type")
+  @Test("XCTAssertNoThrow - Closure is called")
   func testXCTAssertNoThrowVoidReturn() throws {
     var sideEffect = false
     

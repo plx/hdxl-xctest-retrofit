@@ -19,7 +19,7 @@ struct ThrowingAssertionFailureTests {
   @Test("XCTAssertThrowsError - Failure when no error thrown")
   func testXCTAssertThrowsErrorFailure() {
     withKnownIssue {
-      #XCTAssertThrowsError(try functionThatDoesNotThrow())
+      let _ = #XCTAssertThrowsError(try functionThatDoesNotThrow())
     }
   }
   
@@ -49,37 +49,23 @@ struct ThrowingAssertionFailureTests {
   @Test("XCTAssertNoThrow - Failure when error thrown")
   func testXCTAssertNoThrowFailure() throws {
     withKnownIssue {
-      _ = try #XCTAssertNoThrow(functionThatThrows())
+      #XCTAssertNoThrow(functionThatThrows())
     }
   }
   
   @Test("XCTAssertNoThrow - Failure with custom message")
   func testXCTAssertNoThrowFailureWithMessage() throws {
     withKnownIssue {
-      _ = try #XCTAssertNoThrow(functionThatThrows(), "Expected not to throw")
+      #XCTAssertNoThrow(functionThatThrows(), "Expected not to throw")
     }
   }
-  
-  @Test("XCTAssertNoThrow - Failure preserves thrown error")
-  func testXCTAssertNoThrowPreservesError() throws {
-    do {
-      _ = try withKnownIssue {
-        try #XCTAssertNoThrow(functionThatThrows())
-        Issue.record("Expected error to be thrown")
-      }
-    } catch let error as TestError {
-      #expect(error == .expectedError)
-    } catch {
-      Issue.record("Unexpected error type: \(error)")
-    }
-  }
-  
+    
   @Test("XCTAssertNoThrow - Failure with complex expression")
   func testXCTAssertNoThrowFailureComplexExpression() throws {
     let value = 10
     
     withKnownIssue {
-      _ = try #XCTAssertNoThrow({
+      #XCTAssertNoThrow({
         if value > 5 {
           throw TestError.expectedError
         }

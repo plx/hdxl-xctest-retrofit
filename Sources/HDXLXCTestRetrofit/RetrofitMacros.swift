@@ -466,7 +466,7 @@ public macro XCTAssertThrowsError<T>(
   file: StaticString = #filePath,
   line: UInt = #line,
   _ errorHandler: ((any Error) -> Void)? = nil
-) = #externalMacro(
+) -> (any Error)? = #externalMacro(
   module: "HDXLXCTestRetrofitMacros",
   type: "XCTAssertThrowsErrorMacro"
 )
@@ -490,7 +490,7 @@ public macro XCTAssertNoThrow<T>(
   _ message: @autoclosure () -> String = "",
   file: StaticString = #filePath,
   line: UInt = #line
-) -> T = #externalMacro(
+) = #externalMacro(
   module: "HDXLXCTestRetrofitMacros",
   type: "XCTAssertNoThrowMacro"
 )

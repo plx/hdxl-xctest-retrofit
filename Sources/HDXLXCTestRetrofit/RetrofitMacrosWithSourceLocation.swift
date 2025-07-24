@@ -426,7 +426,30 @@ public macro XCTAssertThrowsError<T>(
   _ message: @autoclosure () -> String = "",
   sourceLocation: SourceLocation,
   _ errorHandler: ((any Error) -> Void)? = nil
-) = #externalMacro(
+) -> (any Error)? = #externalMacro(
   module: "HDXLXCTestRetrofitMacros",
   type: "XCTAssertThrowsErrorMacro"
+)
+
+
+/// Emulation of `XCTAssertNoThrow`
+///
+/// - Parameters:
+///   - expression: An expression that can throw an error.
+///   - message: An optional description of the failure. (default: "")
+///   - sourceLocation: The source location where the failure occurred.
+///
+/// - Returns: The value returned by the expression if it doesn't throw.
+///
+/// Asserts that an expression does not throw an error. The test passes if the
+/// expression completes without throwing. If an error is thrown, the test fails
+/// and the error is re-thrown.
+@freestanding(expression)
+public macro XCTAssertNoThrow<T>(
+  _ expression: @autoclosure () throws -> T,
+  _ message: @autoclosure () -> String = "",
+  sourceLocation: SourceLocation
+) = #externalMacro(
+  module: "HDXLXCTestRetrofitMacros",
+  type: "XCTAssertNoThrowMacro"
 )

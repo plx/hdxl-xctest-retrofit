@@ -60,16 +60,16 @@ public enum XCTAssertNoThrowMacro: XCTAssertionMacroProtocol {
     }
     
     // Build the do-catch block that returns the value or records an issue
-    return ExprSyntax("""
-    try {
-      do {
-        return try \(expression.conditionallyWrappedInParentheses(shouldWrap: true))
-      } catch {
-        Issue.record(\(issueRecordArgs))
-        throw error
-      }
-    }()
-    """)
+    return
+      """
+      {
+        do {
+          let _ =  try \(expression.conditionallyWrappedInParentheses(shouldWrap: true))
+        } catch let error {
+          Issue.record(\(issueRecordArgs))
+        }
+      }()
+      """
   }
   
 }

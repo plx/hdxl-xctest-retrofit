@@ -18,72 +18,93 @@ public enum XCTAssertThrowsErrorMacro: XCTAssertionMacroProtocol {
       throw XCTAssertionMacroError.unableToExtractContextArguments(String(reflecting: self))
     }
     
-    // Extract the error handler if present
-    // The error handler would be the last argument if it's a closure without a label
-    let errorHandler: ClosureExprSyntax? = node.trailingClosure ?? node.arguments.reversed().first(where: { arg in
-      arg.label == nil && arg.expression.is(ClosureExprSyntax.self)
-    })?.expression.as(ClosureExprSyntax.self)
+    let possibleErrorHandler = node.finalClosureIfPresent
     
-    // Build the Swift Testing equivalent
-    if let errorHandler {
-      // When we have an error handler, we need to use a do-catch block
-      // Create new context arguments with our custom message
-      let issueContextArgs = XCTAssertionContextArguments(
-        messageExpression: contextArguments.messageExpression ?? ExprSyntax(stringLiteral: "\"Expected an error to be thrown\""),
-        fileExpression: contextArguments.fileExpression,
-        lineExpression: contextArguments.lineExpression,
-        sourceLocationExpression: contextArguments.sourceLocationExpression
-      )
-      let issueRecordArgs = LabeledExprListSyntax(contextArguments: issueContextArgs)
-      
-      return ExprSyntax("""
-      {
-        do {
-          _ = \(expression.conditionallyWrappedInParentheses(shouldWrap: true))
-          Issue.record(\(issueRecordArgs))
-        } catch {
-          (\(errorHandler))(error)
+    let argumentsToForward = LabeledExprListSyntax(contextArguments: contextArguments)
+    
+        
+    // Build the arguments list
+    let expectArgs = LabeledExprListSyntax(
+      initialArgument: LabeledExprSyntax(
+        label: "throws",
+        expression: "(any Error).self" as ExprSyntax
+      ),
+      contextArguments: contextArguments
+    )
+    
+    // Build the #expect macro call with proper syntax
+    let expectCall = MacroExpansionExprSyntax(
+      leadingTrivia: node.leadingTrivia,
+      macroName: "expect" as TokenSyntax,
+      leftParen: .leftParenToken(),
+      arguments: expectArgs,
+      rightParen: .rightParenToken(),
+      trailingClosure: ClosureExprSyntax(
+        statements: CodeBlockItemListSyntax {
+          CodeBlockItemSyntax(
+            item: .expr(expression.conditionallyWrappedInParentheses(shouldWrap: true))
+          )
         }
-      }()
-      """)
-    } else {
-      // Without an error handler, we can use #expect with throws
-      let contextArgs = LabeledExprListSyntax(contextArguments: contextArguments)
-      
-      // Build the arguments list
-      let expectArgs: LabeledExprListSyntax = LabeledExprListSyntax {
-        LabeledExprSyntax(
-          label: "throws",
-          expression: "(any Error).self" as ExprSyntax
-        )
-        for arg in contextArgs {
-          arg
-        }
-      }
-      
-      // Build the #expect macro call with proper syntax
-      let expectCall = MacroExpansionExprSyntax(
-        leadingTrivia: node.leadingTrivia,
-        macroName: "expect" as TokenSyntax,
-        leftParen: .leftParenToken(),
-        arguments: expectArgs,
-        rightParen: .rightParenToken(),
-        trailingClosure: ClosureExprSyntax(
-          statements: CodeBlockItemListSyntax {
-            CodeBlockItemSyntax(
-              item: .expr(expression.conditionallyWrappedInParentheses(shouldWrap: true))
-            )
+      ),
+      trailingTrivia: node.trailingTrivia
+    )
+    
+    let thrownError = context.makeUniqueName("thrownError")
+    
+    switch possibleErrorHandler?.closureExpression {
+    case .some(let errorHandler):
+      return
+        """
+        {
+          let \(thrownError) = \(expectCall)
+          if let \(thrownError) {
+            \(errorHandler)(\(thrownError))
           }
-        ),
-        trailingTrivia: node.trailingTrivia
-      )
-      
-      // Wrap in a statement that discards the return value
-      return try SequenceExprSyntax {
-        DiscardAssignmentExprSyntax()
-        AssignmentExprSyntax(equal: .equalToken(leadingTrivia: .space, trailingTrivia: .space))
-        expectCall
-      }.validatedAndErasedToExprSyntax()
+          
+          return \(thrownError)
+        }()
+        """
+    case .none:
+      return
+        """
+        \(expectCall)
+        """
+    }
+  }
+  
+}
+
+enum FinalClosure {
+  case trailing(ClosureExprSyntax)
+  case argument(ClosureExprSyntax)
+  
+  var isArgument: Bool {
+    switch self {
+    case .trailing: false
+    case .argument: true
+    }
+  }
+  
+  var closureExpression: ClosureExprSyntax? {
+    switch self {
+    case .trailing(let closureExprSyntax):
+      closureExprSyntax
+    case .argument(let closureExprSyntax):
+      closureExprSyntax
+    }
+  }
+}
+
+extension FreestandingMacroExpansionSyntax {
+  
+  
+  var finalClosureIfPresent: FinalClosure? {
+    if let trailingClosure {
+      .trailing(trailingClosure)
+    } else if let lastArgument = arguments.last, lastArgument.label == nil, let closureExpression = lastArgument.expression.as(ClosureExprSyntax.self) {
+      .argument(closureExpression)
+    } else {
+      nil
     }
   }
   
