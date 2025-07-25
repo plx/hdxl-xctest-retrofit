@@ -175,9 +175,13 @@ func testXCTAssertExpansion() throws {
       """,
       expandedSource:
       """
-      #expect(throws: (any Error).self) {
-          (try throwingFunction())
-      }
+      {
+        let __macro_local_11thrownErrorfMu_ = #expect(throws: (any Error).self) {
+            (try throwingFunction())
+        }
+
+        return __macro_local_11thrownErrorfMu_
+      }()
       """,
       macros: testMacros
     )
@@ -188,9 +192,13 @@ func testXCTAssertExpansion() throws {
       """,
       expandedSource:
       """
-      #expect(throws: (any Error).self, "Expected to throw") {
-          (try throwingFunction())
-      }
+      {
+        let __macro_local_11thrownErrorfMu_ = #expect(throws: (any Error).self, "Expected to throw") {
+            (try throwingFunction())
+        }
+
+        return __macro_local_11thrownErrorfMu_
+      }()
       """,
       macros: testMacros
     )
@@ -201,9 +209,13 @@ func testXCTAssertExpansion() throws {
       """,
       expandedSource:
       """
-      #expect(throws: (any Error).self, "Expected to throw", sourceLocation: SourceLocation(file: file, line: line)) {
-          (try throwingFunction())
-      }
+      {
+        let __macro_local_11thrownErrorfMu_ = #expect(throws: (any Error).self, "Expected to throw", sourceLocation: SourceLocation(file: file, line: line)) {
+            (try throwingFunction())
+        }
+
+        return __macro_local_11thrownErrorfMu_
+      }()
       """,
       macros: testMacros
     )

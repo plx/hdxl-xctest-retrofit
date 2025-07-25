@@ -64,7 +64,11 @@ public enum XCTAssertThrowsErrorMacro: XCTAssertionMacroProtocol {
     case .none:
       return
         """
-        \(expectCall)
+        {
+          let \(thrownError) = \(expectCall)
+          
+          return \(thrownError)
+        }()
         """
     }
   }
