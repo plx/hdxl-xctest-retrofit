@@ -8,7 +8,7 @@ import SwiftSyntaxMacros
 #if swift(>=6.1)
 public protocol _XCTAssertionMacroProtocol: SendableMetatype { }
 #else
-public protocol XCTAssertionMacroProtocol { }
+public protocol _XCTAssertionMacroProtocol { }
 #endif
 
 public protocol XCTAssertionMacroProtocol: ExpressionMacro, _XCTAssertionMacroProtocol {
