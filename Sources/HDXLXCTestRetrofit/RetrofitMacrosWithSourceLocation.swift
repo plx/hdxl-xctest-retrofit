@@ -421,6 +421,7 @@ public macro XCTAssertNotEqual<T>(
 /// throws any error. If an errorHandler is provided, it receives the thrown error
 /// for additional validation.
 @freestanding(expression)
+@discardableResult
 public macro XCTAssertThrowsError<T>(
   _ expression: @autoclosure () throws -> T,
   _ message: @autoclosure () -> String = "",

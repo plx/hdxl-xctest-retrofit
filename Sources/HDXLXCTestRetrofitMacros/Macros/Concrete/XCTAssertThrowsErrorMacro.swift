@@ -19,9 +19,6 @@ public enum XCTAssertThrowsErrorMacro: XCTAssertionMacroProtocol {
     }
     
     let possibleErrorHandler = node.finalClosureIfPresent
-    
-    let argumentsToForward = LabeledExprListSyntax(contextArguments: contextArguments)
-    
         
     // Build the arguments list
     let expectArgs = LabeledExprListSyntax(

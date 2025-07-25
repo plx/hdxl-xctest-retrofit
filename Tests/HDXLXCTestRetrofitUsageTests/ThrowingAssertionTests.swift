@@ -105,7 +105,13 @@ struct ThrowingAssertionTests {
   func testXCTAssertNoThrowVoidReturn() throws {
     var sideEffect = false
     
-    #XCTAssertNoThrow({
+    // note: we need to include the explicit signature here,
+    // or else we will get a warning after expansion b/c the
+    // closure-literal will (correctly) be inferred to be throwing,
+    // at which point we're wrapping a non-throwing bit of logic
+    // in `do { try ... } catch { }`, which *does* deserve a warning.
+    //
+    #XCTAssertNoThrow({ () throws -> Void in
       sideEffect = true
       // Function that doesn't throw and returns Void
     }())
