@@ -5,7 +5,7 @@ import SwiftSyntaxMacros
 
 // MARK: XCTAssertionMacroProtocol
 
-#if swift(>=6.1)
+#if swift(>=6.2)
 public protocol _XCTAssertionMacroProtocol: SendableMetatype { }
 #else
 public protocol _XCTAssertionMacroProtocol { }
