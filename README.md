@@ -1,7 +1,7 @@
 # HDXLXCTestRetrofit
 
 [![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)](https://swift.org)
-[![CI](https://github.com/hdxl/hdxl-xctest-retrofit/actions/workflows/swift.yml/badge.svg)](https://github.com/hdxl/hdxl-xctest-retrofit/actions/workflows/swift.yml)
+[![CI](https://github.com/plx/hdxl-xctest-retrofit/actions/workflows/swift.yml/badge.svg)](https://github.com/plx/hdxl-xctest-retrofit/actions/workflows/swift.yml)
 [![Swift Package Manager](https://img.shields.io/badge/SPM-compatible-brightgreen.svg)](https://swift.org/package-manager)
 [![Platforms](https://img.shields.io/badge/Platforms-macOS%2015%2B%20|%20iOS%2018%2B%20|%20tvOS%2018%2B%20|%20watchOS%2011%2B%20|%20visionOS%202%2B-blue.svg)](https://swift.org)
 
